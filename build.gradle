@@ -1,0 +1,116 @@
+plugins {
+  id 'application'
+  id 'com.diffplug.spotless' version '6.21.0'
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
+  testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+  testImplementation('org.hamcrest:hamcrest:2.2')
+}
+
+test {
+  useJUnitPlatform()
+  testLogging {
+    events 'skipped', 'failed'
+  }
+  defaultCharacterEncoding = 'UTF-8'
+}
+
+javadoc {
+  exclude('utils/**', 'clients/**')
+  options {
+    encoding = 'UTF-8'
+    charSet = 'UTF-8'
+    links = [ 'https://docs.oracle.com/en/java/javase/17/docs/api/' ]
+    docTitle = 'MUA'
+    header = '<script type=\'text/javascript\' src=\'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\'></script>'
+    showFromPrivate()
+    addBooleanOption 'Xdoclint:all', true
+    addBooleanOption 'Werror', true
+    addBooleanOption '-allow-script-in-comments', true 
+  }
+}
+
+tasks.register('utilsJavadoc', Javadoc) {
+  source = sourceSets.main.allJava
+  classpath = sourceSets.main.compileClasspath
+  include 'utils/**'
+  destinationDir = file('utils-docs')
+  options {
+    encoding = 'UTF-8'
+    charSet = 'UTF-8'
+    links = [ 'https://docs.oracle.com/en/java/javase/17/docs/api/' ]
+    docTitle = 'MUA - Utilities'
+    header = '<script type=\'text/javascript\' src=\'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\'></script>'
+    addBooleanOption 'Xdoclint:all', true
+    addBooleanOption 'Werror', true
+    addBooleanOption '-allow-script-in-comments', true 
+  }
+}
+
+configure(utilsJavadoc) {   
+  group = 'Documentation'
+  description = 'Produces the documentation of the utils package'
+}
+
+spotless {
+  enforceCheck false
+  java {
+    googleJavaFormat('1.17.0')
+    removeUnusedImports()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+}
+
+tasks.withType(JavaExec) {
+  enableAssertions = project.hasProperty('enableAssertions') ? project.getProperty('enableAssertions') : false
+}
+
+tasks.register('consegna', Exec) {
+  dependsOn spotlessApply
+  commandLine 'git', 'add', 'src', 'tests'
+  doLast {
+    exec {
+      ignoreExitValue true
+      commandLine 'git', 'commit', '-m', 'Consegna'
+    }
+    exec {
+      commandLine 'git', 'push'
+    }
+  }
+}
+
+tasks.register('cleanActual', Delete) {
+  delete fileTree('tests').matching {
+    include '**/actual-*.txt'
+  }
+}
+
+tasks.register('cleanUtilsDocs', Delete) {
+  delete 'utils-docs'
+}
+
+clean {
+  dependsOn cleanActual, cleanUtilsDocs
+}
+
+jar {
+  manifest {
+    attributes 'Main-Class': 'mua.App'
+  }
+}
