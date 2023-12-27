@@ -1,5 +1,7 @@
 package clients;
 
+import mua.Indirizzo;
+
 /** AddressEncode */
 public class AddressEncode {
 
@@ -20,7 +22,7 @@ public class AddressEncode {
             String nome = s.nextLine();
             String locale = s.nextLine();
             String dominio = s.nextLine();
-            mua.Indirizzo address = new mua.Indirizzo(nome, locale, dominio);
+            mua.Indirizzo address = new Indirizzo(nome, locale, dominio);
             System.out.println(address);
         }
     }

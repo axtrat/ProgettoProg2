@@ -7,10 +7,8 @@ import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
 /**
- * Classe immutoabile che rappresenzta un indirizzo email valido:
- * Composto da nome, locale@dominio
- *
- *
+ * Classe immutabile che rappresenzta un indirizzo email valido:
+ * Composto da nome, locale e dominio
  */
 public class Indirizzo {
     private String nome = "";
@@ -36,8 +34,7 @@ public class Indirizzo {
      * @throws NullPointerException     se nome, locale o dominio sono null
      * @throws IllegalArgumentException se nome, locale o dominio contengono
      *                                  caratteri non ASCII
-     * @throws IllegalArgumentException se locale o dominio contengono caratteri non
-     *                                  validi
+     * @throws IllegalArgumentException 
      */
     public Indirizzo(String nome, String locale, String dominio) {
         Objects.requireNonNull(nome);
@@ -60,6 +57,29 @@ public class Indirizzo {
         this.locale = locale;
         this.dominio = dominio;
     }
+    
+    /**
+     * Crea un indirizzo da una stringa che lo rappresenta
+     * <p>
+     * Un indirizzo valido è composto da nome, locale e dominio: {@literal "nome <locale@dominio>"}
+     * <p>
+     * Il nome può essere omesso: {@literal "locale@dominio"},
+     * Nel caso comprenda più di uno spazio va racchiuso tra virgolette es: {@literal "nome con spazi" <locale@dominio>}
+     * @param indirizzo la stringa che rappresenta l'indirizzo
+     * @throws NullPointerException se indirizzo è null
+     * @throws IllegalArgumentException se indirizzo contiene caratteri non ASCII
+     * @throws IllegalArgumentException se locale o dominio contengono caratteri non validi
+     */
+    public static Indirizzo parse(String indirizzo) {
+        Objects.requireNonNull(indirizzo);
+
+        if (!ASCIICharSequence.isAscii(indirizzo))
+            throw new IllegalArgumentException("L'indirizzo può contenere solo caratteri ASCII");
+
+        List<String> res = AddressEncoding.decode(ASCIICharSequence.of(indirizzo)).get(0);
+        return new Indirizzo(res.get(0), res.get(1), res.get(2));
+    }
+
     /**
      * Ritorna il nome (DispalyName) associato all'indirizzo
      * @return il DisplayName dell'indirizzo

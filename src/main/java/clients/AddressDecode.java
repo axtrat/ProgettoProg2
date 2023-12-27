@@ -1,11 +1,5 @@
 package clients;
-
-import utils.ASCIICharSequence;
-import utils.AddressEncoding;
-
-import java.util.List;
 import java.util.Scanner;
-
 import mua.Indirizzo;
 
 /** AddressDecode */
@@ -25,9 +19,7 @@ public class AddressDecode {
      */
     public static void main(String[] args) {
         try (Scanner s = new Scanner(System.in)) {
-            String mail = s.nextLine();
-            List<String> res = AddressEncoding.decode(ASCIICharSequence.of(mail)).get(0);
-            Indirizzo address = new Indirizzo(res.get(0), res.get(1), res.get(2));
+            Indirizzo address = Indirizzo.parse(s.nextLine());
             System.out.println(address.nome());
             System.out.println(address.locale());
             System.out.println(address.dominio());
