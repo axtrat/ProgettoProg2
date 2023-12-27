@@ -3,6 +3,8 @@ package mua;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
+import utils.DateEncoding;
+
 /** Date è una classe immutabile che rappresenta un'intestazione di tipo Date.
 */
 public class Date implements Intestazione {
@@ -24,5 +26,10 @@ public class Date implements Intestazione {
     @Override
     public ZonedDateTime valore() {
         return zonedDateTime;
+    }
+
+    @Override
+    public String toString() {
+        return DateEncoding.encode(zonedDateTime).toString();
     }
 }
