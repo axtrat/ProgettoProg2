@@ -99,10 +99,10 @@ public class Indirizzo {
             return getEmail();
         
         StringBuilder sb = new StringBuilder();
-        if (nome.split(" ").length > 1) 
-            sb.append('"').append(nome).append('"');
-        else
+        if (nome.split(" ").length <= 2)
             sb.append(nome);
+        else
+            sb.append('"').append(nome).append('"');
 
         sb.append(" <").append(getEmail()).append(">");
 
