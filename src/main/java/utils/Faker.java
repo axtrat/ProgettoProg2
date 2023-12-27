@@ -1,3 +1,9 @@
+/*
+
+Copyright 2023 Massimo Santini
+
+*/
+
 package utils;
 
 import java.time.ZonedDateTime;

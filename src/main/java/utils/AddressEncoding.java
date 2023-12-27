@@ -2,21 +2,6 @@
 
 Copyright 2023 Massimo Santini
 
-This file is part of "Programmazione 2 @ UniMI" teaching material.
-
-This is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This material is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this file.  If not, see <https://www.gnu.org/licenses/>.
-
 */
 
 package utils;
@@ -42,7 +27,7 @@ public class AddressEncoding {
                 \\G
                 (
                   (
-                    (?<name>[-\\w]+\\s+[-\\w]+) |
+                    (?<name>[-\\w]+(\\s+[-\\w]+)?) |
                     (\"(?<qname>[^\"]*)\")
                   )\\s+
                 )?
@@ -78,10 +63,10 @@ public class AddressEncoding {
    * respectively to the <em>display name</em>, <em>local</em>, and <em>domain</em> parts of an
    * email address.
    *
-   * <p>The {@link ASCIICharSequence} contains a sequence of email addresses separated by commas;
-   * every address is given by the display name (enclosed in quotes, if composed by more than two
-   * words) followed by the local part and the domain part separated by the {@code @} sign. Examples
-   * of encoded email addresses are:
+   * <p>The {@link ASCIICharSequence} should contain a sequence of email addresses separated by
+   * commas; every address is given by the display name (enclosed in quotes, if composed by more
+   * than two words) followed by the local part and the domain part separated by the {@code @} sign.
+   * Examples of encoded email addresses are:
    *
    * <ul>
    *   <li>{@code rossi@libero.com}
@@ -98,6 +83,9 @@ public class AddressEncoding {
    *   <li>{@code "Ronaldo", "ronaldo.callegari", "foo.it"}
    *   <li>{@code "Piero Carli", "pc", "mac.mec.it"}
    * </ul>
+   *
+   * In case the comma separated sequence contains invalid address, such address will not appear in
+   * the returned list; in case all addresses are invalid, the returned list will be empty.
    *
    * @param sequence the sequence encoding the email addresses.
    * @return the list of email addresses parts.
