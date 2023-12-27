@@ -3,10 +3,9 @@ package clients;
 import java.util.List;
 import java.util.Scanner;
 
-import mua.Destinatari;
+import mua.Destinatario;
 import mua.Indirizzo;
 import mua.Intestazione;
-import utils.AddressEncoding;
 
 /** RecipientsDecode */
 public class RecipientsDecode {
@@ -28,7 +27,7 @@ public class RecipientsDecode {
     public static void main(String[] args) {
         try (Scanner s = new Scanner(System.in)) {
             String destinatari = s.nextLine().split(": ")[1];
-            Intestazione i = Destinatari.parse(destinatari);
+            Intestazione i = Destinatario.parse(destinatari);
             for (Indirizzo indirizzo : (List<Indirizzo>) i.valore()) {
                 System.out.print(indirizzo.nome()+", ");
                 System.out.print(indirizzo.locale()+", ");
