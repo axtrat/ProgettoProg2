@@ -1,17 +1,37 @@
 package clients;
 
+import utils.ASCIICharSequence;
+import utils.AddressEncoding;
+
+import java.util.List;
+import java.util.Scanner;
+
+import mua.Indirizzo;
+
 /** AddressDecode */
 public class AddressDecode {
 
-  /**
-   * Tests address decoding
-   *
-   * <p>Reads a line from stdin containing the encoding of an email address and emits three lines in
-   * the stout corresponding to the (possibly empty) <em>display name</em>, <em>local</em>, and
-   * <em>domain</em> parts of the address.
-   *
-   * @param args not used.
-   */
-  // public static void main(String[] args) {}
+    /**
+     * Tests address decoding
+     *
+     * <p>
+     * Reads a line from stdin containing the encoding of an email address and emits
+     * three lines in
+     * the stout corresponding to the (possibly empty) <em>display name</em>,
+     * <em>local</em>, and
+     * <em>domain</em> parts of the address.
+     *
+     * @param args not used.
+     */
+    public static void main(String[] args) {
+        try (Scanner s = new Scanner(System.in)) {
+            String mail = s.nextLine();
+            List<String> res = AddressEncoding.decode(ASCIICharSequence.of(mail)).get(0);
+            Indirizzo address = new Indirizzo(res.get(0), res.get(1), res.get(2));
+            System.out.println(address.nome());
+            System.out.println(address.locale());
+            System.out.println(address.dominio());
+        }
+    }
 
 }
