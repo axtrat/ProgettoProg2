@@ -10,6 +10,11 @@ import java.util.StringJoiner;
 import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
+/**
+ * Classe immutabile che rappresenta un intestazione di tipo Destinatario.
+ * <p>
+ * Un Destinatario contiente i destinatari del messaggio.
+ */
 public class Destinatario implements Intestazione {
     private List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
 

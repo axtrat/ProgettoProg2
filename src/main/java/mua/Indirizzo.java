@@ -66,6 +66,7 @@ public class Indirizzo {
      * Il nome può essere omesso: {@literal "locale@dominio"},
      * Nel caso comprenda più di uno spazio va racchiuso tra virgolette es: {@literal "nome con spazi" <locale@dominio>}
      * @param indirizzo la stringa che rappresenta l'indirizzo
+     * @return l'indirizzo creato
      * @throws NullPointerException se indirizzo è null
      * @throws IllegalArgumentException se indirizzo contiene caratteri non ASCII
      * @throws IllegalArgumentException se locale o dominio contengono caratteri non validi

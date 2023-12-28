@@ -5,9 +5,8 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Scanner;
 
-import mua.Date;
+import mua.Data;
 import mua.Intestazione;
-import utils.ASCIICharSequence;
 import utils.DateEncoding;
 
 /** DateEncode */
@@ -31,7 +30,7 @@ public class DateEncode {
             int month = s.nextInt();
             int day = s.nextInt();
             ZonedDateTime date = ZonedDateTime.of(LocalDate.of(year, month, day), LocalTime.MIDNIGHT, DateEncoding.EUROPE_ROME);
-            Intestazione i = new Date(date);
+            Intestazione i = new Data(date);
             System.out.println(i);
         }
     }
