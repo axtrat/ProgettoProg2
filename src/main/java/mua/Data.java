@@ -5,16 +5,16 @@ import java.util.Objects;
 
 import utils.DateEncoding;
 
-/** Date è una classe immutabile che rappresenta un'intestazione di tipo Date.
+/** Data è una classe immutabile che rappresenta un'intestazione di tipo Date.
 */
-public class Date implements Intestazione {
+public class Data implements Intestazione {
     private ZonedDateTime zonedDateTime;
 
-    /** Costruisce un'intestazione di tipo Date.
-     * @param zonedDateTime il valore dell'intestazione.
+    /** Costruisce un'intestazione di tipo Data.
+     * @param zonedDateTime l'ora del messaggio.
      * @throws NullPointerException se zonedDateTime è null.
      */
-    public Date(ZonedDateTime zonedDateTime) {
+    public Data(ZonedDateTime zonedDateTime) {
         this.zonedDateTime = Objects.requireNonNull(zonedDateTime);
     }
 

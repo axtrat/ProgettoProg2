@@ -3,7 +3,7 @@ package clients;
 import java.time.ZonedDateTime;
 import java.util.Scanner;
 
-import mua.Date;
+import mua.Data;
 import mua.Intestazione;
 import utils.ASCIICharSequence;
 import utils.DateEncoding;
@@ -23,7 +23,7 @@ public class DateDecode {
      */
     public static void main(String[] args) {
         try (Scanner s = new Scanner(System.in)) {
-            Intestazione i = new Date(DateEncoding.decode(ASCIICharSequence.of(s.nextLine())));
+            Intestazione i = new Data(DateEncoding.decode(ASCIICharSequence.of(s.nextLine())));
             ZonedDateTime date = (ZonedDateTime) i.valore();
             System.out.println(date.getDayOfWeek());
         }
