@@ -1,6 +1,8 @@
 package clients;
 import java.util.Scanner;
 import mua.Indirizzo;
+import mua.Intestazione;
+import mua.Mittente;
 
 /** AddressDecode */
 public class AddressDecode {
@@ -18,12 +20,14 @@ public class AddressDecode {
      * @param args not used.
      */
     public static void main(String[] args) {
+        Intestazione i;
         try (Scanner s = new Scanner(System.in)) {
-            Indirizzo address = Indirizzo.parse(s.nextLine());
-            System.out.println(address.nome());
-            System.out.println(address.locale());
-            System.out.println(address.dominio());
+            i = new Mittente(Indirizzo.parse(s.nextLine()));
         }
+        Indirizzo address = (Indirizzo) i.valore();
+        System.out.println(address.nome());
+        System.out.println(address.locale());
+        System.out.println(address.dominio());
     }
 
 }

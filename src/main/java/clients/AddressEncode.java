@@ -1,6 +1,10 @@
 package clients;
 
+import java.util.Scanner;
+
 import mua.Indirizzo;
+import mua.Intestazione;
+import mua.Mittente;
 
 /** AddressEncode */
 public class AddressEncode {
@@ -18,13 +22,14 @@ public class AddressEncode {
      * @param args not used.
      */
     public static void main(String[] args) {
-        try (java.util.Scanner s = new java.util.Scanner(System.in)) {
+        Intestazione i;
+        try (Scanner s = new Scanner(System.in)) {
             String nome = s.nextLine();
             String locale = s.nextLine();
             String dominio = s.nextLine();
-            mua.Indirizzo address = new Indirizzo(nome, locale, dominio);
-            System.out.println(address);
+            i = new Mittente(new Indirizzo(nome, locale, dominio));
         }
+        System.out.println(i);
     }
 
 }
