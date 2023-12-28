@@ -1,7 +1,6 @@
 package mua;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -11,15 +10,16 @@ import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
 /**
- * Classe immutabile che rappresenta un intestazione di tipo Destinatario.
+ * Classe immutabile che rappresenta un'intestazione di tipo Destinatario.
  * <p>
- * Un Destinatario contiente i destinatari del messaggio.
+ * Un'instanza di Destinatario contiente i destinatari del messaggio.
  */
 public class Destinatario implements Intestazione {
     private List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
 
     /**
      * Crea l'intestazione dei destinatari a partire da una collezione di indirizzi
+     * 
      * @param indirizzi iterable di indirizzi
      * @throws NullPointerException se indirizzi è null
      */
@@ -30,9 +30,10 @@ public class Destinatario implements Intestazione {
 
     /**
      * Crea l'intestazione dei destinatari a partire da una stringa
+     * 
      * @param input stringa che contiene gli indirizzi separati da virgola
      * @return Un'istanza di Destinatari
-     * @throws NullPointerException se input è null
+     * @throws NullPointerException     se input è null
      * @throws IllegalArgumentException se input contiene indirizzi validi
      */
     public static Destinatario parse(String input) {
@@ -42,7 +43,6 @@ public class Destinatario implements Intestazione {
             indirizzi.add(new Indirizzo(indirizzo.get(0), indirizzo.get(1), indirizzo.get(2)));
         return new Destinatario(indirizzi);
     }
-
 
     @Override
     public String tipo() {

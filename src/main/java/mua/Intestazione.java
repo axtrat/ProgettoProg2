@@ -1,9 +1,9 @@
 package mua;
 
 /**
- * Un Intestazione è un'interfaccia che definisce le caratteristiche delle intestazioni di un messaggio
+ * Un'Intestazione è un'interfaccia che definisce le caratteristiche delle intestazioni di un messaggio
  * <p>
- * Un Intestazione è composta da un tipo e da un valore
+ * Un'Intestazione è composta da un tipo e da un valore
  */
 public interface Intestazione {
     /**

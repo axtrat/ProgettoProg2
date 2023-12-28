@@ -6,9 +6,9 @@ import utils.Base64Encoding;
 import java.util.Objects;
 
 /**
- * Oggetto è una classe immutabile che rappresenta un intestazione di tipo Oggetto.
+ * Oggetto è una classe immutabile che rappresenta un'intestazione di tipo Oggetto.
  * <p>
- * Un Oggetto contiene l'oggetto del messaggio.
+ * Un'instanza di Oggetto contiene l'oggetto del messaggio.
  */
 public class Oggetto implements Intestazione {
     private final String oggetto;

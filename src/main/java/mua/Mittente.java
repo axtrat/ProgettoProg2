@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Classe immutabile che rappresenta un'intestazione di tipo Mittente.
  * <p>
- * Un'intestazione di tipo Mittente contiene l'indirizzo del mittente del messaggio.
+ * Un'instanza di Mittente contiene l'indirizzo del mittente del messaggio.
  */
 public class Mittente implements Intestazione {
 
