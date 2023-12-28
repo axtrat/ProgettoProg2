@@ -61,7 +61,7 @@ public class Base64Encoding {
    * Decodes a <em>encoded-word</em> according to the RFC 2047.
    *
    * @param sequence the <em>encoded-word</em> to decode.
-   * @return the decoded word.
+   * @return the decoded word, or {@code null} if {@code sequence} was not an <em>encoded-word</em>.
    * @throws NullPointerException if the sequence is {@code null}.
    */
   public static String decodeWord(final ASCIICharSequence sequence) throws NullPointerException {
