@@ -1,4 +1,4 @@
-package mua;
+package mua.message.header;
 
 import utils.ASCIICharSequence;
 import utils.Base64Encoding;

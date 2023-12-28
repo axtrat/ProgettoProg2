@@ -3,8 +3,8 @@ package clients;
 import java.time.ZonedDateTime;
 import java.util.Scanner;
 
-import mua.Data;
-import mua.Intestazione;
+import mua.message.header.Data;
+import mua.message.header.Intestazione;
 import utils.ASCIICharSequence;
 import utils.DateEncoding;
 

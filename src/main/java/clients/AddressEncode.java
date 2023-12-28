@@ -2,9 +2,9 @@ package clients;
 
 import java.util.Scanner;
 
-import mua.Indirizzo;
-import mua.Intestazione;
-import mua.Mittente;
+import mua.message.header.Indirizzo;
+import mua.message.header.Intestazione;
+import mua.message.header.Mittente;
 
 /** AddressEncode */
 public class AddressEncode {

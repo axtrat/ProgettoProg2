@@ -2,8 +2,8 @@ package clients;
 
 import java.util.Scanner;
 
-import mua.Intestazione;
-import mua.Oggetto;
+import mua.message.header.Intestazione;
+import mua.message.header.Oggetto;
 
 /** SubjectEncode */
 public class SubjectEncode {

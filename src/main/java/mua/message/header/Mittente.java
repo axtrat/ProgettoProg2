@@ -1,4 +1,4 @@
-package mua;
+package mua.message.header;
 
 import java.util.Objects;
 

@@ -3,9 +3,9 @@ package clients;
 import java.util.List;
 import java.util.Scanner;
 
-import mua.Destinatario;
-import mua.Indirizzo;
-import mua.Intestazione;
+import mua.message.header.Destinatario;
+import mua.message.header.Indirizzo;
+import mua.message.header.Intestazione;
 
 /** RecipientsDecode */
 public class RecipientsDecode {

@@ -1,4 +1,4 @@
-package mua;
+package mua.message.header;
 
 /**
  * Un'Intestazione è un'interfaccia che definisce le caratteristiche delle intestazioni di un messaggio
