@@ -5,10 +5,12 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import mua.message.Messaggio;
 import mua.message.Parte;
 import mua.message.header.*;
+import utils.ASCIICharSequence;
 
 /** MessageEncode */
 public class MessageEncode {
@@ -58,17 +60,32 @@ public class MessageEncode {
                 dominio = s.nextLine();
                 indirizzi.add(new Indirizzo(line, locale, dominio));
             }
-            parti.add(new Parte(intestazioni, s.nextLine()));
+            parti.add(creaParte(s.nextLine()));
             String line = s.nextLine();
             while (!line.equals(".") && s.hasNextLine()) {
                 String newLine = s.nextLine();
                 if (line.startsWith("Versione"))
-                    parti.add(new Parte(List.of(), line));
+                    parti.add(creaParte(line));
                     line = newLine;
                 line += newLine;
             }
         }
-        System.out.println(new Messaggio(parti));
+        System.out.println(new Messaggio(intestazioni, parti));
+    }
+
+    private static Parte creaParte(String line) {
+        if (contieneHTML(line))
+            return new Parte(new ContentType("text/html", "charset=\"utf-8\""), line);
+        else if (ASCIICharSequence.isAscii(line))
+            return new Parte(new ContentType("text/plain", "charset=\"us-ascii\""), line);
+        else
+            return new Parte(new ContentType("text/plain", "charset=\"utf-8\""), line);
+    }
+
+    private static boolean contieneHTML(String input) {
+        Pattern pattern = Pattern.compile("<[^>]*>");
+
+        return pattern.matcher(input).find();
     }
 
 }

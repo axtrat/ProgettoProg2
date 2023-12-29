@@ -3,6 +3,9 @@ package mua.message;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import javax.swing.text.AbstractDocument.Content;
+
+import mua.message.header.ContentType;
 import mua.message.header.Intestazione;
 import utils.ASCIICharSequence;
 import utils.Base64Encoding;
@@ -10,42 +13,35 @@ import utils.Base64Encoding;
 /**
  * Classe immutabile che rappresenta la parte iniziale di un messaggio
  */
-public class Parte implements Iterable<Intestazione> {
-    private final List<Intestazione> intestazioni = new ArrayList<>();
-    private String corpo;
+public class Parte {
+    private final ContentType intestazione;
+    private final String corpo;
 
-    public Parte(List<Intestazione> intestazioni, String corpo) {
-        List.copyOf(Objects.requireNonNull(intestazioni)).forEach(
-                (i) -> this.intestazioni.add(Objects.requireNonNull(i)));
+    public Parte(ContentType intestazione, String corpo) {
+        this.intestazione = Objects.requireNonNull(intestazione);
         this.corpo = Objects.requireNonNull(corpo);
     }
 
-    @Override
-    public Iterator<Intestazione> iterator() {
-        return intestazioni.iterator();
+    public String corpo() {
+        return corpo;
+    }
+
+    public ContentType intestazione() {
+        return intestazione;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (contieneHTML(corpo)) {
-            sb.append("Content-Type: text/html; charset=\"utf-8\"\n");
-            sb.append("Content-Transfer-Encoding: base64\n\n");
+        sb.append(intestazione.tipo()).append(": ").append(intestazione.toString());
+        if (!intestazione.isAscii()) {
+            sb.append("\nContent-Transfer-Encoding: base64\n\n");
             sb.append(Base64Encoding.encode(corpo));
-        } else if (ASCIICharSequence.isAscii(corpo)) {
-            sb.append("Content-Type: text/plain; charset=\"us-ascii\"\n\n");
-            sb.append(corpo);
         } else {
-            sb.append("Content-Type: text/plain; charset=\"utf-8\"\n");
-            sb.append("Content-Transfer-Encoding: base64\n\n");
-            sb.append(Base64Encoding.encode(corpo));
+            sb.append("\n\n");
+            sb.append(corpo);
         }
+
         return sb.toString();
-    }
-
-    private static boolean contieneHTML(String input) {
-        Pattern pattern = Pattern.compile("<[^>]*>");
-
-        return pattern.matcher(input).find();
     }
 }
