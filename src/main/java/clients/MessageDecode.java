@@ -3,8 +3,7 @@ package clients;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import javax.xml.stream.events.EntityDeclaration;
+import java.util.StringJoiner;
 
 import mua.message.Messaggio;
 import mua.message.Parte;
@@ -48,38 +47,12 @@ public class MessageDecode {
      * @param args not used.
      */
     public static void main(String[] args) {
-        List<Intestazione> intestazioni = new ArrayList<>();
-        List<Parte> parti = new ArrayList<>();
-        
-        try (Scanner s = new Scanner(System.in)) {
-            intestazioni.add(new Mittente(Indirizzo.parse(s.nextLine().split(": ")[1])));
-            intestazioni.add(Destinatario.parse(s.nextLine().split(": ")[1]));
-            intestazioni.add(Oggetto.parse(s.nextLine().split(": ")[1]));
-            intestazioni.add(new Data(DateEncoding.decode(ASCIICharSequence.of(s.nextLine().split(": ")[1]))));
-            
-            String line = s.nextLine();
-            if (line.startsWith("MIME")) {
-                //Salvi il MIME
-                s.nextLine(); //Salvi il Content-Type
-                s.nextLine(); //skip
-                s.nextLine(); //intesazione
-                s.nextLine(); //skip
-                line = s.nextLine();
-            }
-            while (s.hasNextLine()) {
-                s.nextLine();
-                String corpo = s.nextLine();
-                if (line.contains("utf-8") || line.contains("html")) {
-                    corpo = Base64Encoding.decode(ASCIICharSequence.of(s.nextLine()));
-                }
-                parti.add(new Parte(intestazioni, corpo));
-                if (s.hasNextLine() && s.nextLine().equals("--frontier")) {
-                    line = s.nextLine();
-                }
-            }
-            
+        StringJoiner sj = new StringJoiner("\n");
+        try (Scanner sc = new Scanner(System.in)) {
+            while (sc.hasNextLine()) sj.add(sc.nextLine());
         }
-        Messaggio messaggio = new Messaggio(parti);
+        Messaggio messaggio = Messaggio.parse(sj.toString());
+        
         List<Fragment> fragments = EntryEncoding.decode(ASCIICharSequence.of(messaggio.toString()));  
         for (Fragment fragment : fragments) {    
             System.out.println("Fragment\n    Raw headers:");   
