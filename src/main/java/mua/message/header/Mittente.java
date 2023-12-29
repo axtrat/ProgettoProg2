@@ -5,19 +5,19 @@ import java.util.Objects;
 /**
  * Classe immutabile che rappresenta un'intestazione di tipo Mittente.
  * <p>
- * Un'instanza di Mittente contiene l'indirizzo del mittente del messaggio.
+ * Un'istanza di Mittente contiene l'indirizzo del mittente del messaggio.
  */
 public class Mittente implements Intestazione {
 
     private final Indirizzo indirizzo;
 
     /**
-     * Crea un'intestazione di tipo Mittente a partire da un'indirizzo.
+     * Crea un'intestazione di tipo Mittente a partire da un indirizzo.
      * 
      * @param indirizzo l'indirizzo del mittente del messaggio.
-     * @throws NullPointerException se indirizzo è null.
+     * @throws NullPointerException se {@code indirizzo} è {@code null}.
      */
-    public Mittente(Indirizzo indirizzo) {
+    public Mittente(final Indirizzo indirizzo) {
         this.indirizzo = Objects.requireNonNull(indirizzo);
     }
 

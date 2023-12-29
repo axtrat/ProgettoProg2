@@ -1,13 +1,8 @@
 package mua.message;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
-import javax.swing.text.AbstractDocument.Content;
+import java.util.Objects;
 
 import mua.message.header.ContentType;
-import mua.message.header.Intestazione;
-import utils.ASCIICharSequence;
 import utils.Base64Encoding;
 
 /**
@@ -17,7 +12,7 @@ public class Parte {
     private final ContentType intestazione;
     private final String corpo;
 
-    public Parte(ContentType intestazione, String corpo) {
+    public Parte(final ContentType intestazione, final String corpo) {
         this.intestazione = Objects.requireNonNull(intestazione);
         this.corpo = Objects.requireNonNull(corpo);
     }
@@ -32,7 +27,7 @@ public class Parte {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(intestazione.tipo()).append(": ").append(intestazione.toString());
         if (!intestazione.isAscii()) {
             sb.append("\nContent-Transfer-Encoding: base64\n\n");

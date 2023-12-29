@@ -13,7 +13,6 @@ import utils.Storage;
 import utils.Storage.Box;
 import utils.Storage.Box.Entry;
 import utils.UICard;
-import utils.UIInteract;
 
 /** The application class */
 public class App {
@@ -40,11 +39,11 @@ public class App {
         Parte parte = it.next();
         List<String> headers = new ArrayList<>(), values = new ArrayList<>();
 
-        for (Intestazione intestazione : (Iterable<Intestazione>) () -> messaggio.intestazioni()) {
+        for (Intestazione intestazione : (Iterable<Intestazione>) messaggio::intestazioni) {
             headers.add(intestazione.tipo());
-            if (intestazione instanceof Destinatario destinatario) {
+            if (intestazione instanceof Destinatario destinatario)
                 values.add(destinatario.valore().stream().map(Indirizzo::toString).reduce((a, b) -> a + "\n" + b).get());
-            } else
+            else
                 values.add(intestazione.valore().toString());
         }
 
@@ -87,7 +86,7 @@ public class App {
                 }
             }
         }
-         */
+     */
   }
 
 }

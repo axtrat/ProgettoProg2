@@ -6,18 +6,18 @@ import java.util.Objects;
 /**
  * ContentType è una classe immutabile che rappresenta un'intestazione di tipo ContentType.
  * <p>
- * Un'instanza di ContentType contiene le informzioni sul tipo del contenuto.
+ * Un'istanza di ContentType contiene le information sul tipo del contenuto.
  */
 public class ContentType implements Intestazione {
     private final String[] value = new String[2];
 
-    public ContentType(String value1, String value2) {
+    public ContentType(final String value1, final String value2) {
         value[0] = Objects.requireNonNull(value1);
         value[1] = Objects.requireNonNull(value2);
     }
 
-    public static ContentType parse(String s) {
-        String[] value = s.split("; ");
+    public static ContentType parse(final String s) {
+        final String[] value = s.split("; ");
         return new ContentType(value[0], value[1]);
     }
 

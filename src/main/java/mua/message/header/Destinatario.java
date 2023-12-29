@@ -12,10 +12,10 @@ import utils.AddressEncoding;
 /**
  * Classe immutabile che rappresenta un'intestazione di tipo Destinatario.
  * <p>
- * Un'instanza di Destinatario contiente i destinatari del messaggio.
+ * Un'istanza di Destinatario contiene i destinatari del messaggio.
  */
 public class Destinatario implements Intestazione {
-    private List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
+    private final List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
 
     /**
      * Crea l'intestazione dei destinatari a partire da una collezione di indirizzi
@@ -23,9 +23,9 @@ public class Destinatario implements Intestazione {
      * @param indirizzi iterable di indirizzi
      * @throws NullPointerException se indirizzi è null
      */
-    public Destinatario(Iterable<Indirizzo> indirizzi) {
+    public Destinatario(final Iterable<Indirizzo> indirizzi) {
         Objects.requireNonNull(indirizzi);
-        indirizzi.forEach((indirizzo) -> this.indirizzi.add(indirizzo));
+        indirizzi.forEach(this.indirizzi::add);
     }
 
     /**
@@ -33,13 +33,13 @@ public class Destinatario implements Intestazione {
      * 
      * @param input stringa che contiene gli indirizzi separati da virgola
      * @return Un'istanza di Destinatari
-     * @throws NullPointerException     se input è null
-     * @throws IllegalArgumentException se input contiene indirizzi validi
+     * @throws NullPointerException     se {@code input} è null
+     * @throws IllegalArgumentException se {@code input} contiene indirizzi validi
      */
-    public static Destinatario parse(String input) {
+    public static Destinatario parse(final String input) {
         Objects.requireNonNull(input);
-        List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
-        for (List<String> indirizzo : AddressEncoding.decode(ASCIICharSequence.of(input)))
+        final List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
+        for (final List<String> indirizzo : AddressEncoding.decode(ASCIICharSequence.of(input)))
             indirizzi.add(new Indirizzo(indirizzo.get(0), indirizzo.get(1), indirizzo.get(2)));
         return new Destinatario(indirizzi);
     }
@@ -56,8 +56,8 @@ public class Destinatario implements Intestazione {
 
     @Override
     public String toString() {
-        StringJoiner sj = new StringJoiner(", ");
-        for (Indirizzo indirizzo : indirizzi)
+        final StringJoiner sj = new StringJoiner(", ");
+        for (final Indirizzo indirizzo : indirizzi)
             sj.add(indirizzo.toString());
         return sj.toString();
     }

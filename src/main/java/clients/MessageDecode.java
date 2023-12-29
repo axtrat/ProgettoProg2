@@ -1,21 +1,11 @@
 package clients;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
 import mua.message.Messaggio;
-import mua.message.Parte;
-import mua.message.header.Data;
-import mua.message.header.Destinatario;
-import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
-import mua.message.header.Mittente;
-import mua.message.header.Oggetto;
 import utils.ASCIICharSequence;
-import utils.Base64Encoding;
-import utils.DateEncoding;
 import utils.EntryEncoding;
 import utils.Fragment;
 

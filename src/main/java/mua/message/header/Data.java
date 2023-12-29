@@ -8,10 +8,10 @@ import utils.DateEncoding;
 /**
  * Data è una classe immutabile che rappresenta un'intestazione di tipo Date.
  * <p>
- * Un'instanza di Data contiene la data e l'ora del messaggio.
+ * Un'istanza di Data contiene la data e l'ora del messaggio.
  */
 public class Data implements Intestazione {
-    private ZonedDateTime zonedDateTime;
+    private final ZonedDateTime zonedDateTime;
 
     /**
      * Costruisce un'intestazione di tipo Data.
@@ -19,7 +19,7 @@ public class Data implements Intestazione {
      * @param zonedDateTime l'ora del messaggio.
      * @throws NullPointerException se zonedDateTime è null.
      */
-    public Data(ZonedDateTime zonedDateTime) {
+    public Data(final ZonedDateTime zonedDateTime) {
         this.zonedDateTime = Objects.requireNonNull(zonedDateTime);
     }
 

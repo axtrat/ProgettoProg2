@@ -7,13 +7,13 @@ import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
 /**
- * Classe immutabile che rappresenzta un indirizzo email valido:
+ * Classe immutabile che rappresenta un indirizzo email valido:
  * Composto da nome, locale e dominio
  */
 public class Indirizzo {
     private String nome = "";
-    private String locale;
-    private String dominio;
+    private final String locale;
+    private final String dominio;
 
     /*
      * RI:
@@ -34,9 +34,8 @@ public class Indirizzo {
      * @throws NullPointerException     se nome, locale o dominio sono null
      * @throws IllegalArgumentException se nome, locale o dominio contengono
      *                                  caratteri non ASCII
-     * @throws IllegalArgumentException 
      */
-    public Indirizzo(String nome, String locale, String dominio) {
+    public Indirizzo(final String nome, final String locale, final String dominio) {
         Objects.requireNonNull(nome);
         Objects.requireNonNull(locale);
         Objects.requireNonNull(dominio);
@@ -57,7 +56,7 @@ public class Indirizzo {
         this.locale = locale;
         this.dominio = dominio;
     }
-    
+
     /**
      * Crea un indirizzo da una stringa che lo rappresenta
      * <p>
@@ -71,18 +70,18 @@ public class Indirizzo {
      * @throws IllegalArgumentException se indirizzo contiene caratteri non ASCII
      * @throws IllegalArgumentException se locale o dominio contengono caratteri non validi
      */
-    public static Indirizzo parse(String indirizzo) {
+    public static Indirizzo parse(final String indirizzo) {
         Objects.requireNonNull(indirizzo);
 
         if (!ASCIICharSequence.isAscii(indirizzo))
             throw new IllegalArgumentException("L'indirizzo può contenere solo caratteri ASCII");
 
-        List<String> res = AddressEncoding.decode(ASCIICharSequence.of(indirizzo)).get(0);
+        final List<String> res = AddressEncoding.decode(ASCIICharSequence.of(indirizzo)).get(0);
         return new Indirizzo(res.get(0), res.get(1), res.get(2));
     }
 
     /**
-     * Ritorna il nome (DispalyName) associato all'indirizzo
+     * Ritorna il nome (DisplayName) associato all'indirizzo
      * @return il DisplayName dell'indirizzo
      */ 
     public String nome() {
@@ -119,7 +118,7 @@ public class Indirizzo {
         if (nome.isEmpty()) 
             return getEmail();
         
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (nome.split(" ").length <= 2)
             sb.append(nome);
         else

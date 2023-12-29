@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * Oggetto è una classe immutabile che rappresenta un'intestazione di tipo Oggetto.
  * <p>
- * Un'instanza di Oggetto contiene l'oggetto del messaggio.
+ * Un'istanza di Oggetto contiene l'oggetto del messaggio.
  */
 public class Oggetto implements Intestazione {
     private final String oggetto;
@@ -18,21 +18,21 @@ public class Oggetto implements Intestazione {
      * @param oggetto l'oggetto del messaggio.
      * @throws NullPointerException se oggetto è null.
      */
-    public Oggetto(String oggetto) {
+    public Oggetto(final String oggetto) {
         this.oggetto = Objects.requireNonNull(oggetto);
     }
 
     /**
-     * Crea un oggetto a partire da una stringa possibilimente codificata in base64.
+     * Crea un oggetto a partire da una stringa possibilmente codificata in base64.
      * @param oggetto la stringa.
      * @return l'intestazione di tipo Oggetto.
      * @throws NullPointerException se oggetto è null.
      */
-    public static Oggetto parse(String oggetto) {
+    public static Oggetto parse(final String oggetto) {
         Objects.requireNonNull(oggetto);
-        if (oggetto.startsWith("=?utf-8?B?") && oggetto.endsWith("?="))
-            return new Oggetto(Base64Encoding.decodeWord(ASCIICharSequence.of(oggetto)));
-        return new Oggetto(oggetto);
+        String decoded = Base64Encoding.decodeWord(ASCIICharSequence.of(oggetto));
+        if (Objects.isNull(decoded)) return new Oggetto(oggetto);
+        return new Oggetto(decoded);
     }
 
     @Override

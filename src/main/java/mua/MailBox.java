@@ -22,7 +22,7 @@ public class MailBox implements Iterable<Messaggio> {
     /**
      * Costruisce una MailBox di nome {@code nome}
      * @param nome il nome della MailBox
-     * @throws NullPointerExeption se nome è null
+     * @throws NullPointerException se {@code nome} è {@code null}
      */
     public MailBox(String nome) {
         this.nome = Objects.requireNonNull(nome); 
@@ -70,4 +70,8 @@ public class MailBox implements Iterable<Messaggio> {
         return Set.copyOf(messaggi).iterator();
     }
 
+    @Override
+    public String toString() {
+        return nome;
+    }
 }
