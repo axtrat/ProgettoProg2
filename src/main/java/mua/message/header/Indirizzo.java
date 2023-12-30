@@ -2,127 +2,130 @@ package mua.message.header;
 
 import java.util.List;
 import java.util.Objects;
-
 import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
 /**
- * Classe immutabile che rappresenta un indirizzo email valido:
- * Composto da {@code nome}, {@code locale}, {@code dominio}
+ * Classe immutabile che rappresenta un indirizzo email valido: Composto da {@code nome}, {@code
+ * locale}, {@code dominio}
  */
 public class Indirizzo {
-    private String nome = "";
-    private final String locale;
-    private final String dominio;
+  private String nome = "";
+  private final String locale;
+  private final String dominio;
 
-    /*
-     * RI:
-     * nome, locale e dominio != null e possono contenere solo caratteri ASCII
-     * locale e dominio non devono essere vuote e devono essere composte solo da
-     * caratteri validi
-     */
+  /*
+   * RI:
+   * nome, locale e dominio != null e possono contenere solo caratteri ASCII
+   * locale e dominio non devono essere vuote e devono essere composte solo da
+   * caratteri validi
+   */
 
-    
-    /**
-     * Crea un indirizzo a partire dal {@code nome} (<i>DisplayName</i>) {@code locale} e {@code dominio}:
-     * <i> nome {@literal <}locale@dominio{@literal >}</i>
-     *
-     * @param nome    il DisplayName associato alla mail
-     * @param locale  il locale della mail: <i>{@code locale}@...</i>
-     * @param dominio il dominio della mail: <i>...@{@code dominio}</i>
-     * @throws NullPointerException     se {@code nome}, {@code locale} o {@code dominio} sono null
-     * @throws IllegalArgumentException se {@code nome}, {@code locale} o {@code dominio} contengono
-     *                                  caratteri non ASCII
-     */
-    public Indirizzo(final String nome, final String locale, final String dominio) {
-        Objects.requireNonNull(nome);
-        Objects.requireNonNull(locale);
-        Objects.requireNonNull(dominio);
+  /**
+   * Crea un indirizzo a partire dal {@code nome} (<i>DisplayName</i>) {@code locale} e {@code
+   * dominio}: <i> nome {@literal <}locale@dominio{@literal >}</i>
+   *
+   * @param nome il DisplayName associato alla mail
+   * @param locale il locale della mail: <i>{@code locale}@...</i>
+   * @param dominio il dominio della mail: <i>...@{@code dominio}</i>
+   * @throws NullPointerException se {@code nome}, {@code locale} o {@code dominio} sono null
+   * @throws IllegalArgumentException se {@code nome}, {@code locale} o {@code dominio} contengono
+   *     caratteri non ASCII
+   */
+  public Indirizzo(final String nome, final String locale, final String dominio) {
+    Objects.requireNonNull(nome);
+    Objects.requireNonNull(locale);
+    Objects.requireNonNull(dominio);
 
-        if (!ASCIICharSequence.isAscii(nome))
-            throw new IllegalArgumentException("Il nome può contenere solo caratteri ASCII");
-        if (!ASCIICharSequence.isAscii(locale))
-            throw new IllegalArgumentException("Il locale può contenere solo caratteri ASCII");
-        if (!ASCIICharSequence.isAscii(dominio))
-            throw new IllegalArgumentException("Il dominio può contenere solo caratteri ASCII");
-        
-        if (!AddressEncoding.isValidAddressPart(locale))
-            throw new IllegalArgumentException("Il locale contiene caratteri non validi");
-        if (!AddressEncoding.isValidAddressPart(dominio))
-            throw new IllegalArgumentException("Il dominio contiene caratteri non validi");
+    if (!ASCIICharSequence.isAscii(nome))
+      throw new IllegalArgumentException("Il nome può contenere solo caratteri ASCII");
+    if (!ASCIICharSequence.isAscii(locale))
+      throw new IllegalArgumentException("Il locale può contenere solo caratteri ASCII");
+    if (!ASCIICharSequence.isAscii(dominio))
+      throw new IllegalArgumentException("Il dominio può contenere solo caratteri ASCII");
 
-        this.nome = nome.trim();
-        this.locale = locale;
-        this.dominio = dominio;
-    }
+    if (!AddressEncoding.isValidAddressPart(locale))
+      throw new IllegalArgumentException("Il locale contiene caratteri non validi");
+    if (!AddressEncoding.isValidAddressPart(dominio))
+      throw new IllegalArgumentException("Il dominio contiene caratteri non validi");
 
-    /**
-     * Crea un indirizzo da una stringa che lo rappresenta
-     * <p>
-     * Un indirizzo valido è composto da {@code nome}, {@code locale}, {@code dominio}: <i>nome {@literal <}locale@dominio{@literal >}</i>
-     * <p>
-     * Il nome può essere omesso: <i>"locale@dominio"</i>,
-     * Nel caso comprenda più di uno spazio va racchiuso tra virgolette es: <i>"nome con spazi" {@literal <}locale@dominio{@literal >}</i>
-     * @param input la stringa che rappresenta l'indirizzo
-     * @return l'indirizzo creato
-     * @throws NullPointerException se {@code input} è {@code null}
-     * @throws IllegalArgumentException se {@code input} contiene caratteri non ASCII
-     * @throws IllegalArgumentException se {@code locale} o {@code dominio} contengono caratteri non validi
-     */
-    public static Indirizzo parse(final String input) {
-        Objects.requireNonNull(input);
+    this.nome = nome.trim();
+    this.locale = locale;
+    this.dominio = dominio;
+  }
 
-        if (!ASCIICharSequence.isAscii(input))
-            throw new IllegalArgumentException("L'indirizzo può contenere solo caratteri ASCII");
+  /**
+   * Crea un indirizzo da una stringa che lo rappresenta
+   *
+   * <p>Un indirizzo valido è composto da {@code nome}, {@code locale}, {@code dominio}: <i>nome
+   * {@literal <}locale@dominio{@literal >}</i>
+   *
+   * <p>Il nome può essere omesso: <i>"locale@dominio"</i>, Nel caso comprenda più di uno spazio va
+   * racchiuso tra virgolette es: <i>"nome con spazi" {@literal <}locale@dominio{@literal >}</i>
+   *
+   * @param input la stringa che rappresenta l'indirizzo
+   * @return l'indirizzo creato
+   * @throws NullPointerException se {@code input} è {@code null}
+   * @throws IllegalArgumentException se {@code input} contiene caratteri non ASCII
+   * @throws IllegalArgumentException se {@code locale} o {@code dominio} contengono caratteri non
+   *     validi
+   */
+  public static Indirizzo parse(final String input) {
+    Objects.requireNonNull(input);
 
-        final List<String> res = AddressEncoding.decode(ASCIICharSequence.of(input)).get(0);
-        return new Indirizzo(res.get(0), res.get(1), res.get(2));
-    }
+    if (!ASCIICharSequence.isAscii(input))
+      throw new IllegalArgumentException("L'indirizzo può contenere solo caratteri ASCII");
 
-    /**
-     * Ritorna il nome (<i>DisplayName</i>) associato all'indirizzo
-     * @return il DisplayName dell'indirizzo
-     */ 
-    public String nome() {
-        return nome;
-    }
+    final List<String> res = AddressEncoding.decode(ASCIICharSequence.of(input)).get(0);
+    return new Indirizzo(res.get(0), res.get(1), res.get(2));
+  }
 
-    /**
-     * Ritorna il {@code locale} dell'indirizzo: <i>locale@...</i>
-     * @return il {@code locale} dell'indirizzo
-     */
-    public String locale() {
-        return locale;
-    } 
+  /**
+   * Ritorna il nome (<i>DisplayName</i>) associato all'indirizzo
+   *
+   * @return il DisplayName dell'indirizzo
+   */
+  public String nome() {
+    return nome;
+  }
 
-    /**
-     * Ritorna il {@code dominio} dell'indirizzo: <i>...@dominio</i>
-     * @return il {@code dominio} dell'indirizzo
-     */
-    public String dominio() {
-        return dominio;
-    }
+  /**
+   * Ritorna il {@code locale} dell'indirizzo: <i>locale@...</i>
+   *
+   * @return il {@code locale} dell'indirizzo
+   */
+  public String locale() {
+    return locale;
+  }
 
-    /**
-     * Ritorna l'indirizzo email completo composto da {@code locale} e {@code dominio}
-     * @return l'indirizzo email completo: <i>locale@dominio</i>
-     */
-    public String getEmail() {
-        return String.format("%s@%s", locale, dominio);
-    }
+  /**
+   * Ritorna il {@code dominio} dell'indirizzo: <i>...@dominio</i>
+   *
+   * @return il {@code dominio} dell'indirizzo
+   */
+  public String dominio() {
+    return dominio;
+  }
 
+  /**
+   * Ritorna l'indirizzo email completo composto da {@code locale} e {@code dominio}
+   *
+   * @return l'indirizzo email completo: <i>locale@dominio</i>
+   */
+  public String getEmail() {
+    return String.format("%s@%s", locale, dominio);
+  }
 
-    @Override
-    public String toString() {
-        if (nome.isEmpty()) 
-            return getEmail();
-        
-        final StringBuilder sb = new StringBuilder();
-        if (nome.split(" ").length <= 2) sb.append(nome);
-        else sb.append('"').append(nome).append('"');
+  @Override
+  public String toString() {
+    if (nome.isEmpty()) return getEmail();
 
-        sb.append(" <").append(getEmail()).append(">");
+    final StringBuilder sb = new StringBuilder();
+    if (nome.split(" ").length <= 2) sb.append(nome);
+    else sb.append('"').append(nome).append('"');
 
-        return sb.toString();
-    }
+    sb.append(" <").append(getEmail()).append(">");
+
+    return sb.toString();
+  }
 }
