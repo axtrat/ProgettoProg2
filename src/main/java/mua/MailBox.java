@@ -1,5 +1,6 @@
 package mua;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -16,7 +17,7 @@ public class MailBox implements Iterable<Messaggio> {
      *
      */
 
-    private String nome = "INBOX";
+    private String nome;
     private Set<Messaggio> messaggi = new TreeSet<>();
 
     /**
@@ -58,6 +59,14 @@ public class MailBox implements Iterable<Messaggio> {
     }
 
     /**
+     * Ritorna il {@code nome} della MailBox
+     * @return il {@code nome} della MailBox
+     */
+    public String name() {
+        return nome;
+    }
+
+    /**
      * 
      * @param messaggio
      */
@@ -67,11 +76,15 @@ public class MailBox implements Iterable<Messaggio> {
 
     @Override
     public Iterator<Messaggio> iterator() {
-        return Set.copyOf(messaggi).iterator();
+        return Collections.unmodifiableSet(messaggi).iterator();
     }
 
     @Override
     public String toString() {
         return nome;
+    }
+
+    public Object removeMessage(int n) {
+        return messaggi.remove(getMessage(n));
     }
 }

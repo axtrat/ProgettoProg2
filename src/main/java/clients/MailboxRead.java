@@ -1,7 +1,5 @@
 package clients;
 
-import java.util.Scanner;
-
 import mua.App;
 
 /** MailboxRead */
@@ -17,16 +15,6 @@ public class MailboxRead {
      */
 
     public static void main(String[] args) {
-        App app = new App();
-        try (Scanner sc = new Scanner(System.in)) {
-            while (sc.hasNextLine()) {
-                String[] input = sc.nextLine().split(" ");
-                int n = Integer.parseInt(input[1]) - 1;
-                switch (input[0]) {
-                    case "mbox" -> app.selectMailbox(n);
-                    case "read" -> System.out.println(app.readMessage(n));
-                }
-            }
-        }
+        App.main(args);
     }
 }
