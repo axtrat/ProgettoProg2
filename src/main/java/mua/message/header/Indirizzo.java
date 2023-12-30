@@ -8,7 +8,7 @@ import utils.AddressEncoding;
 
 /**
  * Classe immutabile che rappresenta un indirizzo email valido:
- * Composto da nome, locale e dominio
+ * Composto da {@code nome}, {@code locale}, {@code dominio}
  */
 public class Indirizzo {
     private String nome = "";
@@ -24,15 +24,14 @@ public class Indirizzo {
 
     
     /**
-     * Crea un indirizzo a partire dal nome (DisplayName) locale e dominio:
-     * {@literal nome <locale@dominio>}
-     * <p>
+     * Crea un indirizzo a partire dal {@code nome} (<i>DisplayName</i>) {@code locale} e {@code dominio}:
+     * <i> nome {@literal <}locale@dominio{@literal >}</i>
      *
      * @param nome    il DisplayName associato alla mail
-     * @param locale  il locale della mail "locale"@...
-     * @param dominio il dominio della mail ...@"dominio"
-     * @throws NullPointerException     se nome, locale o dominio sono null
-     * @throws IllegalArgumentException se nome, locale o dominio contengono
+     * @param locale  il locale della mail: <i>{@code locale}@...</i>
+     * @param dominio il dominio della mail: <i>...@{@code dominio}</i>
+     * @throws NullPointerException     se {@code nome}, {@code locale} o {@code dominio} sono null
+     * @throws IllegalArgumentException se {@code nome}, {@code locale} o {@code dominio} contengono
      *                                  caratteri non ASCII
      */
     public Indirizzo(final String nome, final String locale, final String dominio) {
@@ -60,28 +59,28 @@ public class Indirizzo {
     /**
      * Crea un indirizzo da una stringa che lo rappresenta
      * <p>
-     * Un indirizzo valido è composto da nome, locale e dominio: {@literal "nome <locale@dominio>"}
+     * Un indirizzo valido è composto da {@code nome}, {@code locale}, {@code dominio}: <i>nome {@literal <}locale@dominio{@literal >}</i>
      * <p>
-     * Il nome può essere omesso: {@literal "locale@dominio"},
-     * Nel caso comprenda più di uno spazio va racchiuso tra virgolette es: {@literal "nome con spazi" <locale@dominio>}
-     * @param indirizzo la stringa che rappresenta l'indirizzo
+     * Il nome può essere omesso: <i>"locale@dominio"</i>,
+     * Nel caso comprenda più di uno spazio va racchiuso tra virgolette es: <i>"nome con spazi" {@literal <}locale@dominio{@literal >}</i>
+     * @param input la stringa che rappresenta l'indirizzo
      * @return l'indirizzo creato
-     * @throws NullPointerException se indirizzo è null
-     * @throws IllegalArgumentException se indirizzo contiene caratteri non ASCII
-     * @throws IllegalArgumentException se locale o dominio contengono caratteri non validi
+     * @throws NullPointerException se {@code input} è {@code null}
+     * @throws IllegalArgumentException se {@code input} contiene caratteri non ASCII
+     * @throws IllegalArgumentException se {@code locale} o {@code dominio} contengono caratteri non validi
      */
-    public static Indirizzo parse(final String indirizzo) {
-        Objects.requireNonNull(indirizzo);
+    public static Indirizzo parse(final String input) {
+        Objects.requireNonNull(input);
 
-        if (!ASCIICharSequence.isAscii(indirizzo))
+        if (!ASCIICharSequence.isAscii(input))
             throw new IllegalArgumentException("L'indirizzo può contenere solo caratteri ASCII");
 
-        final List<String> res = AddressEncoding.decode(ASCIICharSequence.of(indirizzo)).get(0);
+        final List<String> res = AddressEncoding.decode(ASCIICharSequence.of(input)).get(0);
         return new Indirizzo(res.get(0), res.get(1), res.get(2));
     }
 
     /**
-     * Ritorna il nome (DisplayName) associato all'indirizzo
+     * Ritorna il nome (<i>DisplayName</i>) associato all'indirizzo
      * @return il DisplayName dell'indirizzo
      */ 
     public String nome() {
@@ -89,24 +88,24 @@ public class Indirizzo {
     }
 
     /**
-     * Ritorna il locale dell'indirizzo: "locale"@...
-     * @return il locale dell'indirizzo
+     * Ritorna il {@code locale} dell'indirizzo: <i>locale@...</i>
+     * @return il {@code locale} dell'indirizzo
      */
     public String locale() {
         return locale;
     } 
 
     /**
-     * Ritorna il dominio dell'indirizzo: ...@"dominio"
-     * @return il dominio dell'indirizzo
+     * Ritorna il {@code dominio} dell'indirizzo: <i>...@dominio</i>
+     * @return il {@code dominio} dell'indirizzo
      */
     public String dominio() {
         return dominio;
     }
 
     /**
-     * Ritorna l'indirizzo email completo composto da locale e dominio
-     * @return l'indirizzo email completo: locale@dominio
+     * Ritorna l'indirizzo email completo composto da {@code locale} e {@code dominio}
+     * @return l'indirizzo email completo: <i>locale@dominio</i>
      */
     public String getEmail() {
         return String.format("%s@%s", locale, dominio);
@@ -119,10 +118,8 @@ public class Indirizzo {
             return getEmail();
         
         final StringBuilder sb = new StringBuilder();
-        if (nome.split(" ").length <= 2)
-            sb.append(nome);
-        else
-            sb.append('"').append(nome).append('"');
+        if (nome.split(" ").length <= 2) sb.append(nome);
+        else sb.append('"').append(nome).append('"');
 
         sb.append(" <").append(getEmail()).append(">");
 
