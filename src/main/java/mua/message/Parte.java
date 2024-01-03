@@ -26,7 +26,7 @@ public class Parte {
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append(intestazione.tipo()).append(": ").append(intestazione.toString());
-    if (!intestazione.isAscii()) {
+    if (intestazione.get("charset").equals("\"utf-8\"")) {
       sb.append("\nContent-Transfer-Encoding: base64\n\n");
       sb.append(Base64Encoding.encode(corpo));
     } else {

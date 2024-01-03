@@ -52,7 +52,7 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
         while (s.hasNextLine() && !(line = s.nextLine()).startsWith(separatore)) sj.add(line);
         String corpo = sj.toString();
 
-        if (!contentType.isAscii()) corpo = Base64Encoding.decode(ASCIICharSequence.of(corpo));
+        if (contentType.get("charset").equals("\"utf-8\"")) corpo = Base64Encoding.decode(ASCIICharSequence.of(corpo));
 
         parti.add(new Parte(contentType, corpo));
         if (!s.hasNextLine() || line.equals(separatore + "--")) break;

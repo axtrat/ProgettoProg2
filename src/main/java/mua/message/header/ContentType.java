@@ -13,7 +13,7 @@ import java.util.StringJoiner;
  */
 public class ContentType implements Intestazione {
   private final String type, subtype;
-  private final Map<String, String> attributes = new HashMap<>();
+  private final Map<String, String> attributes;
 
   /**
    * Crea un'istanza di ContentType
@@ -25,7 +25,7 @@ public class ContentType implements Intestazione {
   public ContentType(final String type, final String subtype, final Map<String, String> attribute) {
     this.type = Objects.requireNonNull(type);
     this.subtype = Objects.requireNonNull(subtype);
-    this.attributes.putAll(attribute);
+    this.attributes = Map.copyOf(attribute);
   }
 
   public static ContentType parse(final String s) {
@@ -41,12 +41,12 @@ public class ContentType implements Intestazione {
   }
 
   @Override
-  public List<String> valore() {
-    return List.of(type + "/" + subtype, attributes.toString());
+  public String valore() {
+    return type + "/" + subtype;
   }
 
-  public boolean isAscii() {
-    return attributes.get("charset").equals("\"us-ascii\"");
+  public String get(String key) {
+    return attributes.get(key);
   }
 
   @Override

@@ -94,11 +94,11 @@ public class App {
       values.add("This is a message with multiple parts in MIME format.");
     }
 
-    headers.add("Part\n" + parte.intestazione().valore().get(0));
+    headers.add("Part\n" + parte.intestazione().valore());
     values.add(parte.corpo());
 
     for (Parte p : (Iterable<Parte>) () -> it) {
-      headers.add("Part\n" + p.intestazione().valore().get(0));
+      headers.add("Part\n" + p.intestazione().valore());
       values.add(p.corpo());
     }
 
