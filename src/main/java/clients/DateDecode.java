@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Scanner;
 import mua.message.header.Data;
 import mua.message.header.Intestazione;
+import utils.ASCIICharSequence;
 
 /** DateDecode */
 public class DateDecode {
@@ -19,7 +20,7 @@ public class DateDecode {
   public static void main(String[] args) {
     Intestazione i;
     try (Scanner sc = new Scanner(System.in)) {
-      i = Data.parse(sc.nextLine());
+      i = Data.parse(ASCIICharSequence.of(sc.nextLine()));
     }
     ZonedDateTime date = (ZonedDateTime) i.valore();
     System.out.println(date.getDayOfWeek());

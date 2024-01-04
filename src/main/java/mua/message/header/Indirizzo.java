@@ -55,7 +55,7 @@ public class Indirizzo {
   }
 
   /**
-   * Crea un indirizzo da una stringa che lo rappresenta
+   * Crea un indirizzo da una sequenza che lo rappresenta
    *
    * <p>Un indirizzo valido è composto da {@code nome}, {@code locale}, {@code dominio}: <i>nome
    * {@literal <}locale@dominio{@literal >}</i>
@@ -63,20 +63,16 @@ public class Indirizzo {
    * <p>Il nome può essere omesso: <i>"locale@dominio"</i>, Nel caso comprenda più di uno spazio va
    * racchiuso tra virgolette es: <i>"nome con spazi" {@literal <}locale@dominio{@literal >}</i>
    *
-   * @param input la stringa che rappresenta l'indirizzo
+   * @param sequence la sequenza che rappresenta l'indirizzo
    * @return l'indirizzo creato
-   * @throws NullPointerException se {@code input} è {@code null}
-   * @throws IllegalArgumentException se {@code input} contiene caratteri non ASCII
+   * @throws NullPointerException se {@code sequence} è {@code null}
    * @throws IllegalArgumentException se {@code locale} o {@code dominio} contengono caratteri non
    *     validi
    */
-  public static Indirizzo parse(final String input) {
-    Objects.requireNonNull(input);
+  public static Indirizzo parse(final ASCIICharSequence sequence) {
+    Objects.requireNonNull(sequence);
 
-    if (!ASCIICharSequence.isAscii(input))
-      throw new IllegalArgumentException("L'indirizzo può contenere solo caratteri ASCII");
-
-    final List<String> res = AddressEncoding.decode(ASCIICharSequence.of(input)).get(0);
+    final List<String> res = AddressEncoding.decode(sequence).get(0);
     return new Indirizzo(res.get(0), res.get(1), res.get(2));
   }
 

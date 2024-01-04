@@ -18,15 +18,15 @@ public class App {
     private final List<MailBox> mBoxes = new ArrayList<>();
     private MailBox selected;
 
-  /** Inizializza un'istanza */
-  public App(String baseDir) {
-    for (Box box : new Storage(baseDir).boxes()) {
-      MailBox mBox = new MailBox(box.toString());
-      for (Box.Entry entry : box.entries())
-        mBox.addMessage(Messaggio.parse(entry.content().toString()));
-      mBoxes.add(mBox);
+    /** Inizializza un'istanza */
+    public App(String baseDir) {
+        for (Box box : new Storage(baseDir).boxes()) {
+            MailBox mBox = new MailBox(box.toString());
+            for (Box.Entry entry : box.entries())
+                mBox.addMessage(Messaggio.parse(entry.content()));
+            mBoxes.add(mBox);
+        }
     }
-  }
 
     /**
      * Runs the REPL.
@@ -42,7 +42,8 @@ public class App {
         try (UIInteract ui = UIInteract.getInstance()) {
             for (;;) {
                 String[] input = ui.command("[%s] > ", nomeBox);
-                if (Objects.isNull(input)) break;
+                if (Objects.isNull(input))
+                    break;
                 int n = (input.length > 1) ? Integer.parseInt(input[1]) - 1 : 0;
                 switch (input[0]) {
                     case "LSM" -> System.out.println(mua.listMailboxes());
@@ -59,20 +60,25 @@ public class App {
                         sj.add(ui.line("Date: "));
 
                         ui.output("Text Body (. to end):");
-                        do sj.add((line = ui.line())); 
+                        do
+                            sj.add((line = ui.line()));
                         while (!line.equals("."));
 
                         ui.output("Html Body (. to end):");
-                        do sj.add((line = ui.line())); 
+                        do
+                            sj.add((line = ui.line()));
                         while (!line.equals("."));
 
                         mua.compose(sj.toString());
                     }
-                    case "EXIT" -> {return;}
+                    case "EXIT" -> {
+                        return;
+                    }
                     default -> ui.error("Unknown command: " + input[0]);
                 }
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 
     public String listMailboxes() {
@@ -146,35 +152,34 @@ public class App {
         List<Intestazione> intestazioni = new ArrayList<>();
         List<Parte> parti = new ArrayList<>();
         try (Scanner sc = new Scanner(string)) {
-            intestazioni.add(new Mittente(Indirizzo.parse(sc.nextLine())));
-            intestazioni.add(Destinatario.parse(sc.nextLine()));
+            intestazioni.add(new Mittente(Indirizzo.parse(ASCIICharSequence.of(sc.nextLine()))));
+            intestazioni.add(Destinatario.parse(ASCIICharSequence.of(sc.nextLine())));
             intestazioni.add(new Oggetto(sc.nextLine()));
-            intestazioni.add(Data.parse(sc.nextLine()));
+            intestazioni.add(Data.parse(ASCIICharSequence.of(sc.nextLine())));
 
             Map<String, String> corpi = new HashMap<>();
-            StringJoiner sj = new StringJoiner("\n");
-            String corpo;
-            while (!(corpo = sc.nextLine()).equals(".")) sj.add(corpo);
-            if (!(corpo = sj.toString()).isEmpty())
-                corpi.put("plain", corpo);
 
-            sj = new StringJoiner("\n");
-            while (!(corpo = sc.nextLine()).equals(".")) sj.add(corpo);
-            if (!(corpo = sj.toString()).isEmpty())
-                corpi.put("html", corpo);
+            for (String type : new String[]{"plain", "html"}) {
+                StringJoiner sj = new StringJoiner("\n");
+                String corpo;
+                while (!(corpo = sc.nextLine()).equals("."))
+                    sj.add(corpo);
+                if (!(corpo = sj.toString()).isEmpty())
+                    corpi.put(type, corpo);
+            }
 
             if (corpi.size() > 1) {
                 intestazioni.add(new Mime("1.0"));
-                intestazioni.add(ContentType.parse("multipart/alternative; boundary=frontier"));
+                intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
                 parti.add(new Parte(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();
             }
 
-            for (String key: corpi.keySet()) {
+            for (String key : corpi.keySet()) {
                 if (key.equals("plain") && ASCIICharSequence.isAscii(corpi.get(key))) {
-                    intestazioni.add(ContentType.parse("text/plain; charset=\"us-ascii\""));
+                    intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"us-ascii\"")));
                 } else {
-                    intestazioni.add(ContentType.parse("text/" + key + "; charset=\"utf-8\""));
+                    intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/" + key + "; charset=\"utf-8\"")));
                     intestazioni.add(new ContentTransferEncoding("base64"));
                 }
                 parti.add(new Parte(intestazioni, corpi.get(key)));

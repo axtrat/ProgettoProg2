@@ -1,5 +1,7 @@
 package mua.message.header;
 
+import utils.ASCIICharSequence;
+
 import java.util.Objects;
 
 /**
@@ -22,14 +24,14 @@ public class Mittente implements Intestazione {
   }
 
   /**
-   * Crea un'intestazione di tipo Mittente a partire da una stringa.
+   * Crea un'intestazione di tipo Mittente a partire da una sequenza.
    *
-   * @param input la stringa da cui creare l'intestazione.
+   * @param sequence la sequenza da cui creare l'intestazione.
    * @return un'intestazione di tipo Mittente.
-   * @throws NullPointerException se {@code input} è {@code null}.
+   * @throws NullPointerException se {@code sequence} è {@code null}.
    */
-  public static Mittente parse(final String input) {
-    return new Mittente(Indirizzo.parse(Objects.requireNonNull(input)));
+  public static Mittente parse(final ASCIICharSequence sequence) {
+    return new Mittente(Indirizzo.parse(sequence));
   }
 
   @Override

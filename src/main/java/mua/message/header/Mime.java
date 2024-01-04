@@ -1,5 +1,7 @@
 package mua.message.header;
 
+import utils.ASCIICharSequence;
+
 import java.util.Objects;
 
 public class Mime implements Intestazione {
@@ -8,6 +10,10 @@ public class Mime implements Intestazione {
 
     public Mime(String version) {
         this.version = Objects.requireNonNull(version);
+    }
+
+    public static Mime parse(ASCIICharSequence sequence) {
+        return new Mime(Objects.requireNonNull(sequence).toString());
     }
 
     @Override

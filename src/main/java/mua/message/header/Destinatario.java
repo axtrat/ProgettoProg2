@@ -28,17 +28,17 @@ public class Destinatario implements Intestazione {
   }
 
   /**
-   * Crea l'intestazione dei destinatari a partire da una stringa
+   * Crea l'intestazione dei destinatari a partire da una sequenza
    *
-   * @param input stringa che contiene gli indirizzi separati da virgola
+   * @param sequence sequenza che contiene gli indirizzi separati da virgola
    * @return Un'istanza di Destinatari
-   * @throws NullPointerException se {@code input} è null
-   * @throws IllegalArgumentException se {@code input} contiene indirizzi validi
+   * @throws NullPointerException se {@code sequence} è null
+   * @throws IllegalArgumentException se {@code sequence} contiene indirizzi validi
    */
-  public static Destinatario parse(final String input) {
-    Objects.requireNonNull(input);
+  public static Destinatario parse(final ASCIICharSequence sequence) {
+    Objects.requireNonNull(sequence);
     final List<Indirizzo> indirizzi = new ArrayList<Indirizzo>();
-    for (final List<String> indirizzo : AddressEncoding.decode(ASCIICharSequence.of(input)))
+    for (final List<String> indirizzo : AddressEncoding.decode(sequence))
       indirizzi.add(new Indirizzo(indirizzo.get(0), indirizzo.get(1), indirizzo.get(2)));
     return new Destinatario(indirizzi);
   }

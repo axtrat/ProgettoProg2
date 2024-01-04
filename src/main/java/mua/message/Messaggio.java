@@ -21,10 +21,10 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
         parti.get(0).forEach(this.intestazioni::add);
     }
 
-    public static Messaggio parse(final String string) {
+    public static Messaggio parse(final ASCIICharSequence sequence) {
         final HeaderParser parser = new HeaderParser();
         final List<Parte> parti = new ArrayList<>();
-        for (Fragment fragment : EntryEncoding.decode(ASCIICharSequence.of(string))) {
+        for (Fragment fragment : EntryEncoding.decode(sequence)) {
             List<Intestazione> intestazioni = new ArrayList<>();
             String corpo = fragment.rawBody().toString();
             for (List<ASCIICharSequence> rawHeader : fragment.rawHeaders()) {

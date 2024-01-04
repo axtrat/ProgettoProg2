@@ -23,16 +23,16 @@ public class Oggetto implements Intestazione {
   }
 
   /**
-   * Crea un oggetto a partire da una stringa possibilmente codificata in base64.
+   * Crea un sequence a partire da una sequenza possibilmente codificata in base64.
    *
-   * @param oggetto la stringa.
+   * @param sequence la sequenza.
    * @return l'intestazione di tipo Oggetto.
-   * @throws NullPointerException se oggetto è null.
+   * @throws NullPointerException se sequence è null.
    */
-  public static Oggetto parse(final String oggetto) {
-    Objects.requireNonNull(oggetto);
-    String decoded = Base64Encoding.decodeWord(ASCIICharSequence.of(oggetto));
-    if (Objects.isNull(decoded)) return new Oggetto(oggetto);
+  public static Oggetto parse(final ASCIICharSequence sequence) {
+    Objects.requireNonNull(sequence);
+    String decoded = Base64Encoding.decodeWord(sequence);
+    if (Objects.isNull(decoded)) return new Oggetto(sequence.toString());
     return new Oggetto(decoded);
   }
 

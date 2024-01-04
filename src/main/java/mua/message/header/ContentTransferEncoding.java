@@ -1,5 +1,7 @@
 package mua.message.header;
 
+import utils.ASCIICharSequence;
+
 import java.util.Objects;
 
 public class ContentTransferEncoding implements Intestazione {
@@ -7,6 +9,10 @@ public class ContentTransferEncoding implements Intestazione {
 
     public ContentTransferEncoding(String encoding) {
         this.encoding = Objects.requireNonNull(encoding);
+    }
+
+    public static ContentTransferEncoding parse (ASCIICharSequence sequence) {
+        return new ContentTransferEncoding(Objects.requireNonNull(sequence).toString());
     }
 
     @Override

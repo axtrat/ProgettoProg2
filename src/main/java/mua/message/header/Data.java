@@ -24,14 +24,14 @@ public class Data implements Intestazione {
   }
 
   /**
-   * Crea l'intestazione Data a partire da una stringa
+   * Crea l'intestazione Data a partire da una sequenza
    *
-   * @param input stringa che contiene la Data
+   * @param sequence sequenza che contiene la Data
    * @return Un'istanza di Data
-   * @throws NullPointerException se {@code input} è null
+   * @throws NullPointerException se {@code sequence} è null
    */
-  public static Data parse(final String input) {
-    return new Data(DateEncoding.decode(ASCIICharSequence.of(Objects.requireNonNull(input))));
+  public static Data parse(final ASCIICharSequence sequence) {
+    return new Data(DateEncoding.decode(Objects.requireNonNull(sequence)));
   }
 
   @Override

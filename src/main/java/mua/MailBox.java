@@ -14,8 +14,8 @@ public class MailBox implements Iterable<Messaggio> {
    *
    */
 
-  private String nome;
-  private Set<Messaggio> messaggi = new TreeSet<>();
+  private final String nome;
+  private final Set<Messaggio> messaggi = new TreeSet<>();
 
   /**
    * Costruisce una MailBox di nome {@code nome}
@@ -46,7 +46,7 @@ public class MailBox implements Iterable<Messaggio> {
   }
 
   /**
-   * @param i
+   * @param i indice del messaggio
    * @return il messaggio scelto
    * @throws IndexOutOfBoundsException se l'indice è fuori dal range
    */
@@ -66,7 +66,7 @@ public class MailBox implements Iterable<Messaggio> {
   }
 
   /**
-   * @param messaggio
+   * @param messaggio da aggiungere
    */
   public void addMessage(Messaggio messaggio) {
     messaggi.add(Objects.requireNonNull(messaggio));
@@ -82,7 +82,7 @@ public class MailBox implements Iterable<Messaggio> {
     return nome;
   }
 
-  public Object removeMessage(int n) {
-    return messaggi.remove(getMessage(n));
+  public void removeMessage(int n) {
+    messaggi.remove(getMessage(n));
   }
 }

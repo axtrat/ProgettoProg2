@@ -4,6 +4,7 @@ import java.util.Scanner;
 import mua.message.header.Indirizzo;
 import mua.message.header.Intestazione;
 import mua.message.header.Mittente;
+import utils.ASCIICharSequence;
 
 /** AddressDecode */
 public class AddressDecode {
@@ -20,7 +21,7 @@ public class AddressDecode {
   public static void main(String[] args) {
     Intestazione i;
     try (Scanner s = new Scanner(System.in)) {
-      i = new Mittente(Indirizzo.parse(s.nextLine()));
+      i = new Mittente(Indirizzo.parse(ASCIICharSequence.of(s.nextLine())));
     }
     Indirizzo address = (Indirizzo) i.valore();
     System.out.println(address.nome());

@@ -3,6 +3,7 @@ package clients;
 import java.util.Scanner;
 import mua.message.header.Intestazione;
 import mua.message.header.Oggetto;
+import utils.ASCIICharSequence;
 
 /** SubjectDecode */
 public class SubjectDecode {
@@ -18,7 +19,7 @@ public class SubjectDecode {
   public static void main(String[] args) {
     Intestazione i;
     try (Scanner s = new Scanner(System.in)) {
-      i = Oggetto.parse(s.nextLine());
+      i = Oggetto.parse(ASCIICharSequence.of(s.nextLine()));
     }
     System.out.println(i.valore());
   }

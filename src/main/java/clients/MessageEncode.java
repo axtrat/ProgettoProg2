@@ -69,7 +69,7 @@ public class MessageEncode {
             }
             if (corpi.size() > 1) {
                 intestazioni.add(new Mime("1.0"));
-                intestazioni.add(ContentType.parse("multipart/alternative; boundary=frontier"));
+                intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
                 parti.add(new Parte(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();
             }
@@ -83,15 +83,15 @@ public class MessageEncode {
     private static Parte creaParte(List<Intestazione> intestazioni, String line) {
         Parte parte;
         if (contieneHTML(line)) {
-            intestazioni.add(ContentType.parse("text/html; charset=\"utf-8\""));
+            intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/html; charset=\"utf-8\"")));
             intestazioni.add(new ContentTransferEncoding("base64"));
             parte = new Parte(intestazioni, line);
         } else if (!ASCIICharSequence.isAscii(line)) {
-            intestazioni.add(ContentType.parse("text/plain; charset=\"utf-8\""));
+            intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"utf-8\"")));
             intestazioni.add(new ContentTransferEncoding("base64"));
             parte = new Parte(intestazioni, line);
         } else {
-            intestazioni.add(ContentType.parse("text/plain; charset=\"us-ascii\""));
+            intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"us-ascii\"")));
             parte = new Parte(intestazioni, line);
         }
         intestazioni.clear();

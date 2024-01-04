@@ -5,6 +5,7 @@ import java.util.Scanner;
 import mua.message.header.Destinatario;
 import mua.message.header.Indirizzo;
 import mua.message.header.Intestazione;
+import utils.ASCIICharSequence;
 
 /** RecipientsDecode */
 public class RecipientsDecode {
@@ -24,13 +25,12 @@ public class RecipientsDecode {
      * @param args not used.
      */
     public static void main(String[] args) {
-        Intestazione i;
+        Destinatario destinatario;
         try (Scanner s = new Scanner(System.in)) {
             String destinatari = s.nextLine().split(": ")[1];
-            i = Destinatario.parse(destinatari);
+            destinatario = Destinatario.parse(ASCIICharSequence.of(destinatari));
         }
-        Destinatario d = (Destinatario) i;
-        for (Indirizzo indirizzo : d.valore()) {
+        for (Indirizzo indirizzo : destinatario.valore()) {
             System.out.print(indirizzo.nome() + ", ");
             System.out.print(indirizzo.locale() + ", ");
             System.out.println(indirizzo.dominio());

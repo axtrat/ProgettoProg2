@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import utils.ASCIICharSequence;
+
 /**
  * ContentType è una classe immutabile che rappresenta un'intestazione di tipo ContentType.
  *
@@ -26,8 +28,8 @@ public class ContentType implements Intestazione {
     this.attributes = Map.copyOf(attribute);
   }
 
-  public static ContentType parse(final String s) {
-    final String[] values = s.split("; ");
+  public static ContentType parse(final ASCIICharSequence sequence) {
+    final String[] values = sequence.toString().split("; ");
     final String[] types = values[0].split("/");
     final String[] attribute = values[1].split("=");
     return new ContentType(types[0], types[1], Map.of(attribute[0], attribute[1]));
