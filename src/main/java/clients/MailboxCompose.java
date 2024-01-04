@@ -2,6 +2,7 @@ package clients;
 
 import java.io.IOException;
 import java.util.StringJoiner;
+
 import mua.App;
 import utils.UIInteract;
 
@@ -17,7 +18,7 @@ public class MailboxCompose {
    * @param args not used
    */
   public static void main(String[] args) {
-    App app = new App();
+    App app = new App("tests/mbox");
     try (UIInteract ui = UIInteract.getInstance()) {
       for (; ; ) {
         String[] input = ui.command("> ");

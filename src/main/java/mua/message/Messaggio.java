@@ -1,108 +1,65 @@
 package mua.message;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
-import java.util.StringJoiner;
-import mua.message.header.ContentType;
-import mua.message.header.Data;
-import mua.message.header.Destinatario;
-import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
-import mua.message.header.Mittente;
-import mua.message.header.Oggetto;
+import mua.message.header.*;
 import utils.ASCIICharSequence;
 import utils.Base64Encoding;
+import utils.EntryEncoding;
+import utils.Fragment;
+import java.time.ZonedDateTime;
+import java.util.*;
 
+/**
+ * r
+ */
 public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
-  private final List<Intestazione> intestazioni;
-  private final List<Parte> parti;
+    private final List<Intestazione> intestazioni = new ArrayList<>();
+    private final List<Parte> parti;
 
-  public Messaggio(final List<Intestazione> intestazioni, final List<Parte> parti) {
-    this.intestazioni = List.copyOf(intestazioni);
-    this.parti = List.copyOf(parti);
-  }
+    public Messaggio(final List<Parte> parti) {
+        this.parti = List.copyOf(parti);
 
-  public static Messaggio parse(final String string) {
-    final List<Intestazione> intestazioni = new ArrayList<>();
-    final List<Parte> parti = new ArrayList<>();
-    try (Scanner s = new Scanner(string)) {
-      intestazioni.add(new Mittente(Indirizzo.parse(s.nextLine().split(": ")[1])));
-      intestazioni.add(Destinatario.parse(s.nextLine().split(": ")[1]));
-      intestazioni.add(Oggetto.parse(s.nextLine().split(": ")[1]));
-      intestazioni.add(Data.parse(s.nextLine().split(": ")[1]));
-
-      String line = s.nextLine();
-      String separatore = "--";
-      if (line.startsWith("MIME")) {
-        separatore += s.nextLine().split("boundary=")[1]; // Content-Type
-        s.nextLine(); // space
-        s.nextLine(); // Messaggio
-        s.nextLine(); // --frontier
-        line = s.nextLine();
-      }
-      for (; ; ) {
-        final ContentType contentType = ContentType.parse(line.split(": ")[1]);
-        s.nextLine();
-
-        final StringJoiner sj = new StringJoiner("\n");
-        sj.add(s.nextLine());
-        while (s.hasNextLine() && !(line = s.nextLine()).startsWith(separatore)) sj.add(line);
-        String corpo = sj.toString();
-
-        if (contentType.get("charset").equals("\"utf-8\"")) corpo = Base64Encoding.decode(ASCIICharSequence.of(corpo));
-
-        parti.add(new Parte(contentType, corpo));
-        if (!s.hasNextLine() || line.equals(separatore + "--")) break;
-        line = s.nextLine();
-      }
-
-      return new Messaggio(intestazioni, parti);
-    }
-  }
-
-  private ZonedDateTime getData() {
-    return (ZonedDateTime) intestazioni.get(3).valore();
-  }
-
-  @Override
-  public int compareTo(final Messaggio o) {
-    return o.getData().compareTo(this.getData());
-  }
-
-  @Override
-  public Iterator<Parte> iterator() {
-    return List.copyOf(parti).iterator();
-  }
-
-  public Iterator<Intestazione> intestazioni() {
-    return intestazioni.iterator();
-  }
-
-  @Override
-  public String toString() {
-    final StringJoiner sj = new StringJoiner("\n");
-    for (final Intestazione intestazione : intestazioni)
-      sj.add(intestazione.tipo() + ": " + intestazione);
-
-    if (parti.size() == 1) {
-      sj.add(parti.get(0).toString());
-      return sj.toString();
+        parti.get(0).forEach(this.intestazioni::add);
     }
 
-    sj.add("MIME-Version: 1.0");
-    sj.add("Content-Type: multipart/alternative; boundary=frontier");
-    sj.add("\nThis is a message with multiple parts in MIME format.");
-
-    sj.add("--frontier");
-    sj.add(parti.get(0).toString());
-    sj.add("--frontier");
-    for (final Parte p : parti.subList(1, parti.size())) {
-      sj.add(p.toString());
-      sj.add("--frontier");
+    public static Messaggio parse(final String string) {
+        final HeaderParser parser = new HeaderParser();
+        final List<Parte> parti = new ArrayList<>();
+        for (Fragment fragment : EntryEncoding.decode(ASCIICharSequence.of(string))) {
+            List<Intestazione> intestazioni = new ArrayList<>();
+            String corpo = fragment.rawBody().toString();
+            for (List<ASCIICharSequence> rawHeader : fragment.rawHeaders()) {
+                Intestazione i = parser.parse(rawHeader.get(0), rawHeader.get(1));
+                if (Objects.nonNull(i)) intestazioni.add(i);
+            }
+            if (intestazioni.contains(new ContentTransferEncoding("base64")))
+                corpo = Base64Encoding.decode(ASCIICharSequence.of(corpo));
+            parti.add(new Parte(intestazioni, corpo));
+        }
+        return new Messaggio(parti);
     }
-    return sj + "--";
-  }
+
+    private ZonedDateTime getData() {
+        return (ZonedDateTime) intestazioni.get(3).valore();
+    }
+
+    @Override
+    public int compareTo(final Messaggio o) {
+        return o.getData().compareTo(this.getData());
+    }
+
+    @Override
+    public Iterator<Parte> iterator() {
+        return List.copyOf(parti).iterator();
+    }
+
+    public Iterator<Intestazione> intestazioni() {
+        return intestazioni.iterator();
+    }
+
+    @Override
+    public String toString() {
+        final StringJoiner sj = new StringJoiner("\n--frontier\n");
+        for (final Parte parte : parti) sj.add(parte.toString());
+        return sj+((parti.size() > 1) ? "\n--frontier--": "");
+    }
 }
