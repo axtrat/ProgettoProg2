@@ -40,7 +40,7 @@ public class App {
         App mua = new App("tests/mbox");
         String nomeBox = "*";
         try (UIInteract ui = UIInteract.getInstance()) {
-            for (; ; ) {
+            for (;;) {
                 String[] input = ui.command("[%s] > ", nomeBox);
                 if (Objects.isNull(input)) break;
                 int n = (input.length > 1) ? Integer.parseInt(input[1]) - 1 : 0;
@@ -59,18 +59,20 @@ public class App {
                         sj.add(ui.line("Date: "));
 
                         ui.output("Text Body (. to end):");
-                        do sj.add((line = ui.line())); while (!line.equals("."));
+                        do sj.add((line = ui.line())); 
+                        while (!line.equals("."));
 
                         ui.output("Html Body (. to end):");
-                        do sj.add((line = ui.line())); while (!line.equals("."));
+                        do sj.add((line = ui.line())); 
+                        while (!line.equals("."));
 
                         mua.compose(sj.toString());
                     }
+                    case "EXIT" -> {return;}
                     default -> ui.error("Unknown command: " + input[0]);
                 }
             }
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
     }
 
     public String listMailboxes() {
@@ -156,6 +158,7 @@ public class App {
             if (!(corpo = sj.toString()).isEmpty())
                 corpi.put("plain", corpo);
 
+            sj = new StringJoiner("\n");
             while (!(corpo = sc.nextLine()).equals(".")) sj.add(corpo);
             if (!(corpo = sj.toString()).isEmpty())
                 corpi.put("html", corpo);
