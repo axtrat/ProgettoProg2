@@ -97,8 +97,7 @@ public class EntryEncoding {
     }
 
     private ASCIICharSequence rawBody() {
-      return ASCIICharSequence.of(
-          lines.stream().map(Object::toString).collect(Collectors.joining("\n")));
+      return ASCIICharSequence.of(String.join("\n", lines));
     }
   }
 

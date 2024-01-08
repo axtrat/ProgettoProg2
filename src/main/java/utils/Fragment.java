@@ -37,7 +37,7 @@ public class Fragment {
    *
    * <p>Every element of the list is a list of two elements: the first is the {@link
    * ASCIICharSequence} corresponding to the name of the header (the part before {@code :}, in
-   * uppercase), the second is the {@link ASCIICharSequence} corresponding to the value of the
+   * lower case), the second is the {@link ASCIICharSequence} corresponding to the value of the
    * header (the part after {@code :}).
    *
    * @return a list of raw headers.
