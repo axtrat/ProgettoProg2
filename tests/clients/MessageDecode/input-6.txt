@@ -1,0 +1,19 @@
+From: Luca <prigioniero@di.html.it>
+To: Massimo Santini <santini@di.unimi.it>, info@unimi.it
+Subject: Oggetto html
+Date: Wed, 6 Dec 2023 12:30:20 +0100
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary=frontier
+
+This is a message with multiple parts in MIME format.
+--frontier
+Content-Type: text/plain; charset="us-ascii"
+
+Questa versione testuale non e' html
+--frontier
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: base64
+
+TWVudHJlIHF1ZXN0YSBzaSBjaGUgbG8gZSc=
+--frontier--
+
