@@ -8,8 +8,11 @@ import utils.ASCIICharSequence;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 /**
@@ -60,46 +63,32 @@ public class MessageEncode {
                 dominio = s.nextLine();
                 indirizzi.add(new Indirizzo(line, locale, dominio));
             }
-            String line = s.nextLine();
-            List<String> corpi = new ArrayList<>();
-            while (!line.equals(".") && s.hasNextLine()) {
-                String newLine = s.nextLine();
-                if (line.startsWith("Versione")) corpi.add(line);
-                line = newLine;
-            }
+
+            Map<String, String> corpi = new HashMap<>();
+            String corpo;
+
+            for (String type : new String[]{"plain", "html"})
+                if (!(corpo = s.nextLine()).isEmpty())
+                    corpi.put(type, corpo);
+            
             if (corpi.size() > 1) {
                 intestazioni.add(new Mime("1.0"));
                 intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
                 parti.add(new Parte(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();
             }
-            for (String corpo : corpi) {
-                parti.add(creaParte(intestazioni, corpo));
+
+            for (String key : corpi.keySet()) {
+                if (key.equals("plain") && ASCIICharSequence.isAscii(corpi.get(key))) {
+                    intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"us-ascii\"")));
+                } else {
+                    intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/" + key + "; charset=\"utf-8\"")));
+                    intestazioni.add(new ContentTransferEncoding("base64"));
+                }
+                parti.add(new Parte(intestazioni, corpi.get(key)));
+                intestazioni.clear();
             }
         }
         System.out.println(new Messaggio(parti));
-    }
-
-    private static Parte creaParte(List<Intestazione> intestazioni, String line) {
-        Parte parte;
-        if (contieneHTML(line)) {
-            intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/html; charset=\"utf-8\"")));
-            intestazioni.add(new ContentTransferEncoding("base64"));
-            parte = new Parte(intestazioni, line);
-        } else if (!ASCIICharSequence.isAscii(line)) {
-            intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"utf-8\"")));
-            intestazioni.add(new ContentTransferEncoding("base64"));
-            parte = new Parte(intestazioni, line);
-        } else {
-            intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"us-ascii\"")));
-            parte = new Parte(intestazioni, line);
-        }
-        intestazioni.clear();
-        return parte;
-    }
-
-    private static boolean contieneHTML(String input) {
-        Pattern pattern = Pattern.compile("<[^>]*>");
-        return pattern.matcher(input).find();
     }
 }

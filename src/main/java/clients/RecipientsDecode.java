@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import mua.message.header.Destinatario;
 import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
 import utils.ASCIICharSequence;
 
 /** RecipientsDecode */
