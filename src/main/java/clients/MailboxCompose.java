@@ -1,6 +1,7 @@
 package clients;
 
 import mua.App;
+import mua.Mua;
 import utils.UIInteract;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class MailboxCompose {
      * @param args not used
      */
     public static void main(String[] args) {
-        App app = new App("tests/mbox");
+        Mua app = new Mua("tests/mbox");
         try (UIInteract ui = UIInteract.getInstance()) {
             for (; ; ) {
                 String[] input = ui.command("> ");
@@ -41,7 +42,7 @@ public class MailboxCompose {
                         for (int i = 0; i < 2; i++)
                             do sj.add((line = ui.line())); while (!line.equals("."));
 
-                        app.compose(sj.toString());
+                        app.addMessage(App.compose(sj.toString()));
                     }
                 }
             }

@@ -1,32 +1,32 @@
 package mua;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.StringJoiner;
 
 import mua.message.Messaggio;
 import mua.message.Parte;
-import mua.message.header.*;
-import utils.*;
-import utils.Storage.Box;
+import mua.message.header.ContentTransferEncoding;
+import mua.message.header.ContentType;
+import mua.message.header.Data;
+import mua.message.header.Destinatario;
+import mua.message.header.Indirizzo;
+import mua.message.header.Intestazione;
+import mua.message.header.Mime;
+import mua.message.header.Mittente;
+import mua.message.header.Oggetto;
+import utils.ASCIICharSequence;
+import utils.UIInteract;
 
 /**
  * The application class
  */
 public class App {
-
-    private final List<MailBox> mBoxes = new ArrayList<>();
-    private MailBox selected;
-
-    /** Inizializza un'istanza */
-    public App(String baseDir) {
-        for (Box box : new Storage(baseDir).boxes()) {
-            MailBox mBox = new MailBox(box.toString());
-            for (Box.Entry entry : box.entries())
-                mBox.addMessage(Messaggio.parse(entry.content()));
-            mBoxes.add(mBox);
-        }
-    }
 
     /**
      * Runs the REPL.
@@ -37,7 +37,7 @@ public class App {
      * @param args the first argument is the mailbox base directory.
      */
     public static void main(String[] args) {
-        App mua = new App("tests/mbox");
+        Mua mua = new Mua("tests/mbox");
         String nomeBox = "*";
         try (UIInteract ui = UIInteract.getInstance()) {
             for (;;) {
@@ -69,7 +69,7 @@ public class App {
                             sj.add((line = ui.line()));
                         while (!line.equals("."));
 
-                        mua.compose(sj.toString());
+                        mua.addMessage(compose(sj.toString()));
                     }
                     case "EXIT" -> {
                         return;
@@ -80,75 +80,8 @@ public class App {
         } catch (IOException ignored) {
         }
     }
-
-    public String listMailboxes() {
-        List<List<String>> content = new ArrayList<>();
-        for (MailBox mailBox : mBoxes)
-            content.add(List.of(mailBox.name(), String.valueOf(mailBox.size())));
-
-        return UITable.table(List.of("Mailbox", "# messages"), content, true, false);
-    }
-
-    public String selectMailbox(int n) {
-        selected = mBoxes.get(n);
-        return selected.name();
-    }
-
-    public String listMessages() {
-        List<List<String>> content = new ArrayList<>();
-        for (Messaggio message : selected) {
-            LinkedList<String> row = new LinkedList<>();
-            Iterator<Intestazione> it = message.intestazioni();
-            row.add(((Indirizzo) it.next().valore()).getEmail());
-            StringJoiner sj = new StringJoiner("\n");
-            for (Indirizzo indirizzo : ((Destinatario) it.next()).valore())
-                sj.add(indirizzo.getEmail());
-            row.add(sj.toString()); // To
-            row.add(it.next().valore().toString()); // Subject
-            ZonedDateTime data = (ZonedDateTime) it.next().valore();
-            row.addFirst(data.toLocalDate() + "\n" + data.toLocalTime()); // Date
-            content.add(row);
-        }
-
-        return UITable.table(List.of("Date", "From", "To", "Subject"), content, true, true);
-    }
-
-    public String readMessage(int n) {
-        Messaggio messaggio = selected.getMessage(n);
-        List<String> headers = new ArrayList<>(), values = new ArrayList<>();
-
-        for (Parte parte : messaggio) {
-            for (Intestazione intestazione : parte) {
-                switch (intestazione.tipo()) {
-                    case "From", "Subject", "Date" -> {
-                        headers.add(intestazione.tipo());
-                        values.add(intestazione.valore().toString());
-                    }
-                    case "To" -> {
-                        headers.add(intestazione.tipo());
-                        StringJoiner sj = new StringJoiner("\n");
-                        for (Indirizzo indirizzo : ((Destinatario) intestazione).valore())
-                            sj.add(indirizzo.toString());
-                        values.add(sj.toString());
-                    }
-                    case "Content-Type" -> {
-                        headers.add("Part\n" + intestazione.valore());
-                        values.add(parte.corpo());
-                    }
-                    default -> {
-                    }
-                }
-            }
-        }
-
-        return UICard.card(headers, values);
-    }
-
-    public void deleteMessage(int n) {
-        selected.removeMessage(n);
-    }
-
-    public void compose(String string) {
+    
+    public static Messaggio compose(String string) {
         List<Intestazione> intestazioni = new ArrayList<>();
         List<Parte> parti = new ArrayList<>();
         try (Scanner sc = new Scanner(string)) {
@@ -186,6 +119,6 @@ public class App {
                 intestazioni.clear();
             }
         }
-        selected.addMessage(new Messaggio(parti));
+        return new Messaggio(parti);
     }
 }
