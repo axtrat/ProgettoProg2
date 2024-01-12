@@ -46,7 +46,7 @@ public class MailBox implements Iterable<Messaggio> {
     /**
      * @param i indice del messaggio
      * @return il messaggio scelto
-     * @throws IndexOutOfBoundsException se l'indice è fuori dal range
+     * @throws IndexOutOfBoundsException se l'indice è maggiore o uguale al numero di messaggi
      */
     public Messaggio getMessage(int i) {
         int j = 0;
@@ -66,6 +66,7 @@ public class MailBox implements Iterable<Messaggio> {
     }
 
     /**
+     * Aggiunge il messaggio {@code messaggio} alla MailBox
      * @param messaggio da aggiungere
      */
     public void addMessage(Messaggio messaggio) {
@@ -77,6 +78,11 @@ public class MailBox implements Iterable<Messaggio> {
         return Collections.unmodifiableSet(messaggi).iterator();
     }
 
+    /**
+     * Rimuove il messaggio di indice {@code n}
+     *
+     * @param n indice del messaggio da rimuovere
+     */
     public void removeMessage(int n) {
         messaggi.remove(getMessage(n));
     }

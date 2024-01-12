@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 
@@ -22,11 +23,14 @@ import utils.Storage.Box.Entry;
 
 
 public class Mua {
-    
+    /** Lista di mailboxes */
     private final List<MailBox> mBoxes = new ArrayList<>();
-    private final Map<MailBox, Box> boxMap = new HashMap<>();
-    private final Map<Messaggio, Entry> entryMap = new TreeMap<>();
+    /** Mailbox selezionata */
     private MailBox selected;
+    /** Corrispondenza tra Mailbox in memoria e su disco */
+    private final Map<MailBox, Box> boxMap = new HashMap<>();
+    /** Corrispondenza tra Messaggio in memoria e su disco */
+    private final Map<Messaggio, Entry> entryMap = new TreeMap<>();
 
     public Mua(String baseDir) {
         for (Box box : new Storage(baseDir).boxes()) {
@@ -42,17 +46,6 @@ public class Mua {
         mBoxes.sort((mb1, mb2) -> mb1.toString().compareTo(mb2.toString()));
     }
 
-    public void deleteMessage(int n) {
-        entryMap.get(selected.getMessage(n)).delete();
-        selected.removeMessage(n);
-    }
-
-    public void addMessage(Messaggio messaggio) {
-        Entry newEntry = boxMap.get(selected).entry(ASCIICharSequence.of(messaggio.toString()));
-        entryMap.put(messaggio, newEntry);
-        selected.addMessage(messaggio);
-    }
-
     public String listMailboxes() {
         List<List<String>> content = new ArrayList<>();
         for (MailBox mailBox : mBoxes)
@@ -61,12 +54,38 @@ public class Mua {
         return UITable.table(List.of("Mailbox", "# messages"), content, true, false);
     }
 
+    /**
+     * Seleziona la mailbox di indice {@code n} e ne restituisce il nome.
+     * @param n l'indice della mailbox da selezionare
+     * @return il nome della mailbox selezionata
+     * @throws IndexOutOfBoundsException se {@code n} supera il numero di mailbox
+     */
     public String selectMailbox(int n) {
         selected = mBoxes.get(n);
         return selected.name();
     }
 
+    /**
+     * Aggiunge il messaggio {@code messaggio} alla mailbox selezionata.
+     * @param messaggio il messaggio da aggiungere
+     * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
+     * @throws NullPointerException se {@code messaggio} è {@code null}
+     */
+    public void addMessage(Messaggio messaggio) {
+        if (Objects.isNull(selected))
+            throw new IllegalStateException("Nessuna mailbox selezionata");
+        entryMap.put(messaggio, boxMap.get(selected).entry(ASCIICharSequence.of(Objects.requireNonNull(messaggio).toString())));
+        selected.addMessage(messaggio);
+    }
+
+    /**
+     * Restituisce una tabella contenente i messaggi della mailbox selezionata.
+     * @return la stringa che rappresenta la tabella
+     * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
+     */
     public String listMessages() {
+        if (Objects.isNull(selected))
+            throw new IllegalStateException("Nessuna mailbox selezionata");
         List<List<String>> content = new ArrayList<>();
         for (Messaggio message : selected) {
             LinkedList<String> row = new LinkedList<>();
@@ -85,7 +104,31 @@ public class Mua {
         return UITable.table(List.of("Date", "From", "To", "Subject"), content, true, true);
     }
 
+    /**
+     * Elimina il messaggio di indice {@cose n} dalla mailbox selezionata.
+     * @param n l'indice del messaggio da eliminare
+     * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
+     * @throws IndexOutOfBoundsException se {@code n} supera il numero di messaggi contenuti nella mailbox
+     */
+    public void deleteMessage(int n) {
+        if (Objects.isNull(selected))
+            throw new IllegalStateException("Nessuna mailbox selezionata");
+        entryMap.get(selected.getMessage(n)).delete();
+        selected.removeMessage(n);
+    }
+
+    /**
+     * Restitusce una stringa che rappresenta il messaggio di indice {@code n} della mailbox selezionata.
+     * <p>
+     * Il messaggio è rappresentato come una card di intestazioni e corpi del messaggio.
+     * @param n l'indice del messaggio da leggere
+     * @return la stringa che rappresenta il messaggio
+     * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
+     * @throws IndexOutOfBoundsException se {@code n} supera il numero di messaggi contenuti nella mailbox
+     */
     public String readMessage(int n) {
+        if (Objects.isNull(selected))
+            throw new IllegalStateException("Nessuna mailbox selezionata");
         Messaggio messaggio = selected.getMessage(n);
         List<String> headers = new ArrayList<>(), values = new ArrayList<>();
 
