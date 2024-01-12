@@ -21,7 +21,21 @@ import utils.UITable;
 import utils.Storage.Box;
 import utils.Storage.Box.Entry;
 
-
+/**
+ * Classe che gestisce un Mail User Agent (MUA)
+ * <p>
+ * Un MUA è un programma che permette di gestire le email.
+ * <p>
+ * Un MUA permette di:
+ * <ul>
+ *     <li>visualizzare le mailbox disponibili</li>
+ *     <li>selezionare una mailbox</li>
+ *     <li>aggiungere un messaggio alla mailbox selezionata</li>
+ *     <li>visualizzare i messaggi della mailbox selezionata</li>
+ *     <li>eliminare un messaggio dalla mailbox selezionata</li>
+ *     <li>visualizzare un messaggio della mailbox selezionata</li>
+ * </ul>
+ */
 public class Mua {
     /** Lista di mailboxes */
     private final List<MailBox> mBoxes = new ArrayList<>();
@@ -32,12 +46,35 @@ public class Mua {
     /** Corrispondenza tra Messaggio in memoria e su disco */
     private final Map<Messaggio, Entry> entryMap = new TreeMap<>();
 
-    public Mua(String baseDir) {
-        for (Box box : new Storage(baseDir).boxes()) {
+    /*
+     * RI:  mBoxes, boxMap, entryMap != null e non contengono null
+     *      ad ogni MailBox in mBoxes corrisponde una Entry in boxMap e viceversa
+     *      ad ogni Messaggio corrisponde una Entry in entryMap e viceversa
+     * 
+     * AF:  
+     */
+
+    /**
+     * Costruisce un'istanza di Mua a partire dalla {@code directory} in cui sono contenute le mailbox.
+     * <p> Legge le mailbox contenute nella {@code directory} e le carica in memoria.
+     * @param directory directory che contiene le mailbox
+     * @throws NullPointerException se {@code directory} è {@code null}
+     * @throws IllegalStateException se è presente un messaggio corrotto o non ben formato
+     */
+    public Mua(String directory) {
+        for (Box box : new Storage(Objects.requireNonNull(directory)).boxes()) {
             MailBox mBox = new MailBox(box.toString());
             boxMap.put(mBox, box);
             for (Box.Entry entry : box.entries()) {
-                Messaggio messaggio = Messaggio.parse(entry.content());
+                Messaggio messaggio;
+                try {
+                    messaggio = Messaggio.parse(entry.content());
+                } catch (Exception exception) {
+                    throw new IllegalStateException(
+                        "Il messaggio: " + entry.toString() + " non è codificato secondo lo standard RFC:\n" + 
+                        exception.getMessage()
+                    );
+                }
                 entryMap.put(messaggio, entry);
                 mBox.addMessage(messaggio);
             }
@@ -46,6 +83,10 @@ public class Mua {
         mBoxes.sort((mb1, mb2) -> mb1.toString().compareTo(mb2.toString()));
     }
 
+    /**
+     * Restituisce una tabella contenente le mailbox disponibili.
+     * @return la stringa che rappresenta la tabella
+     */
     public String listMailboxes() {
         List<List<String>> content = new ArrayList<>();
         for (MailBox mailBox : mBoxes)
@@ -105,7 +146,7 @@ public class Mua {
     }
 
     /**
-     * Elimina il messaggio di indice {@cose n} dalla mailbox selezionata.
+     * Elimina il messaggio di indice {@code n} dalla mailbox selezionata.
      * @param n l'indice del messaggio da eliminare
      * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
      * @throws IndexOutOfBoundsException se {@code n} supera il numero di messaggi contenuti nella mailbox

@@ -81,10 +81,18 @@ public class App {
         }
     }
     
-    public static Messaggio compose(String string) {
+    /**
+     * Compone un messaggio a partire dall'{@code input} utente
+     * <p>
+     * Se l'input non è valido, viene lanciata un'eccezione
+     * @param input l'input utente 
+     * @return il messaggio composto se l'input è valido
+     * @throws IllegalArgumentException se l'input non è valido
+     */
+    private static Messaggio compose(String input) {
         List<Intestazione> intestazioni = new ArrayList<>();
         List<Parte> parti = new ArrayList<>();
-        try (Scanner sc = new Scanner(string)) {
+        try (Scanner sc = new Scanner(input)) {
             intestazioni.add(new Mittente(Indirizzo.parse(ASCIICharSequence.of(sc.nextLine()))));
             intestazioni.add(Destinatario.parse(ASCIICharSequence.of(sc.nextLine())));
             intestazioni.add(new Oggetto(sc.nextLine()));

@@ -20,7 +20,7 @@ public class Indirizzo {
 
     /*
      * RI:
-     * nome, locale e dominio != null e possono contenere solo caratteri ASCII
+     * nome, locale e dominio != null e devono contenere solo caratteri ASCII
      * locale e dominio non devono essere vuote e devono essere composte solo da
      * caratteri validi
      */

@@ -1,5 +1,6 @@
 package mua;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
@@ -11,9 +12,10 @@ import mua.message.Messaggio;
  * MailBox classe concreta mutabile che rappresenta una collezzione di messaggi
  */
 public class MailBox implements Iterable<Messaggio> {
-
+    /** Nome della MailBox */
     private final String nome;
-    private final Set<Messaggio> messaggi = new TreeSet<>((m1, m2) -> m2.compareTo(m1));
+    /** Collezione di messaggi */
+    private final Collection<Messaggio> messaggi = new TreeSet<>((m1, m2) -> m2.compareTo(m1));
 
     /**
      * Costruisce una MailBox di nome {@code nome}
@@ -75,7 +77,7 @@ public class MailBox implements Iterable<Messaggio> {
 
     @Override
     public Iterator<Messaggio> iterator() {
-        return Collections.unmodifiableSet(messaggi).iterator();
+        return Collections.unmodifiableCollection(messaggi).iterator();
     }
 
     /**

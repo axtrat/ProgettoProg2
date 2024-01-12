@@ -9,6 +9,8 @@ import java.util.function.Function;
 
 /**
  * Classe mutabile utilitaria che si occupa di decodificara le intestazioni
+ * <p>
+ * Decodifica le intestazioni in modo dinamico ed espandibile
  */
 public class HeaderParser {
     /** Mappa il tipo dell'intestazione (in minuscolo) alla sua funzione di parsing */
