@@ -9,7 +9,9 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
- * r
+ * Classe immutabile che rappresenta un messaggio email
+ * <p>
+ * Un messaggio di posta
  */
 public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
     private final List<Intestazione> intestazioni = new ArrayList<>();
@@ -44,7 +46,14 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
 
     @Override
     public int compareTo(final Messaggio o) {
-        return o.getData().compareTo(this.getData());
+        int res = this.getData().compareTo(o.getData());
+        if (res != 0) return res;
+
+        for (int i = 0; i < intestazioni.size(); i++) {
+            res = this.intestazioni.get(i).toString().compareTo(o.intestazioni.get(i).toString());
+            if (res != 0) return res;
+        }
+        return 0;
     }
 
     @Override
