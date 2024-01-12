@@ -12,6 +12,6 @@ public class MailboxList {
    * @param args not used
    */
   public static void main(String[] args) {
-    App.main(args);
+    App.main(new String[] {"tests/mbox"});
   }
 }

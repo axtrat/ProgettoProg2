@@ -37,7 +37,7 @@ public class App {
      * @param args the first argument is the mailbox base directory.
      */
     public static void main(String[] args) {
-        Mua mua = new Mua("tests/mbox");
+        Mua mua = new Mua(args[0]);
         String nomeBox = "*";
         try (UIInteract ui = UIInteract.getInstance()) {
             for (;;) {
@@ -59,12 +59,12 @@ public class App {
                         sj.add(ui.line("Subject: "));
                         sj.add(ui.line("Date: "));
 
-                        ui.output("Text Body (. to end):");
+                        ui.prompt("Text Body (. to end):");
                         do
                             sj.add((line = ui.line()));
                         while (!line.equals("."));
 
-                        ui.output("Html Body (. to end):");
+                        ui.prompt("Html Body (. to end):");
                         do
                             sj.add((line = ui.line()));
                         while (!line.equals("."));
