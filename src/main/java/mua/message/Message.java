@@ -12,28 +12,28 @@ import java.util.*;
  * Classe immutabile che rappresenta un messaggio email
  * <p>
  * Un messaggio è costituito da una o più parti;
- * ciascuna parte comprende alcune intestazioni (come ad esempio l'oggetto, il mittente, i destinatari…) e un corpo che è il suo vero e proprio contenuto.
+ * Ciascuna parte comprende alcune intestazioni (come ad esempio l'oggetto, il mittente, i destinatari…) e un corpo che è il suo vero e proprio contenuto.
  */
-public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
+public class Message implements Iterable<Part>, Comparable<Message> {
     /** Lista di intestazioni (copiata dalla prima parte) >= 4 */
-    private final List<Intestazione> intestazioni = new ArrayList<>();
+    private final List<Header> intestazioni = new ArrayList<>();
     /** Lista di parti >= 1 */
-    private final List<Parte> parti;
+    private final List<Part> parti;
 
     /*
-     * RI:  intestazioni != null && intestazioni.size() >= 4 && 
+     * RI:  intestazioni != null && intestazioni.size() >= 4 &&
      *      parti != null && parti.size() >= 1
      * 
      * AF:
      */
 
     /**
-     * Costruisce un'istanza di Messaggio a partire dalle sue {@code parti}
+     * Costruisce un'istanza di Message a partire dalle sue {@code parti}
      * @param parti parti del messaggio
      * @throws NullPointerException se {@code parti} è null
      * @throws IllegalArgumentException se {@code parti.isEmpty()} o {@code intestazioni.size() < 4}
      */
-    public Messaggio(final List<Parte> parti) {
+    public Message(final List<Part> parti) {
         this.parti = List.copyOf(parti);
         parti.get(0).forEach(this.intestazioni::add);
         if (intestazioni.size() < 4)
@@ -43,7 +43,7 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
     }
 
     /**
-     * Costruisce un'istanza di Messaggio a partire dalla sua {@code sequence}
+     * Decodifica un'istanza di Message a partire sequenza ASCII
      * <p>
      * La sequenza deve essere codificata secondo lo standard RFC
      * @param sequence sequenza di caratteri ASCII che rappresenta il messaggio codificato
@@ -51,22 +51,22 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
      * @throws NullPointerException se {@code sequence} è null
      * @throws IllegalArgumentException se {@code sequence} non è codificata secondo lo standard RFC
      */
-    public static Messaggio parse(final ASCIICharSequence sequence) {
+    public static Message parse(final ASCIICharSequence sequence) {
         Objects.requireNonNull(sequence, "La sequenza non può essere null");
         final HeaderParser parser = new HeaderParser();
-        final List<Parte> parti = new ArrayList<>();
+        final List<Part> parti = new ArrayList<>();
         for (Fragment fragment : EntryEncoding.decode(sequence)) {
-            List<Intestazione> intestazioni = new ArrayList<>();
+            List<Header> intestazioni = new ArrayList<>();
             String corpo = fragment.rawBody().toString();
             for (List<ASCIICharSequence> rawHeader : fragment.rawHeaders()) {
-                Intestazione i = parser.parse(rawHeader.get(0), rawHeader.get(1));
+                Header i = parser.parse(rawHeader.get(0), rawHeader.get(1));
                 if (Objects.nonNull(i)) intestazioni.add(i);
             }
-            if (intestazioni.contains(new ContentTransferEncoding("base64")))
+            if (intestazioni.contains(ContentTransferEncoding.parse(ASCIICharSequence.of("base64"))))
                 corpo = Base64Encoding.decode(ASCIICharSequence.of(corpo));
-            parti.add(new Parte(intestazioni, corpo));
+            parti.add(new Part(intestazioni, corpo));
         }
-        return new Messaggio(parti);
+        return new Message(parti);
     }
 
     /**
@@ -74,11 +74,11 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
      * @return la data del messaggio
      */
     private ZonedDateTime getData() {
-        return (ZonedDateTime) intestazioni.get(3).valore();
+        return (ZonedDateTime) intestazioni.get(3).value();
     }
 
     @Override
-    public int compareTo(final Messaggio o) {
+    public int compareTo(final Message o) {
         int res = this.getData().compareTo(o.getData());
         if (res != 0) return res;
 
@@ -93,19 +93,19 @@ public class Messaggio implements Iterable<Parte>, Comparable<Messaggio> {
      * Restituisce le intestazioni principali del messaggio
      * @return le intestazioni principali del messaggio
      */
-    public Iterator<Intestazione> intestazioni() {
+    public Iterator<Header> intestazioni() {
         return intestazioni.iterator();
     }
 
     @Override
-    public Iterator<Parte> iterator() {
+    public Iterator<Part> iterator() {
         return List.copyOf(parti).iterator();
     }
 
     @Override
     public String toString() {
         final StringJoiner sj = new StringJoiner("\n--frontier\n");
-        for (final Parte parte : parti) sj.add(parte.toString());
+        for (final Part parte : parti) sj.add(parte.toString());
         return sj+((parti.size() > 1) ? "\n--frontier--": "");
     }
 }

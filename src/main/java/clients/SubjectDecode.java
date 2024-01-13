@@ -1,8 +1,8 @@
 package clients;
 
 import java.util.Scanner;
-import mua.message.header.Intestazione;
-import mua.message.header.Oggetto;
+import mua.message.header.Header;
+import mua.message.header.Subject;
 import utils.ASCIICharSequence;
 
 /** SubjectDecode */
@@ -17,10 +17,10 @@ public class SubjectDecode {
    * @param args not used.
    */
   public static void main(String[] args) {
-    Intestazione i;
+    Header i;
     try (Scanner s = new Scanner(System.in)) {
-      i = Oggetto.parse(ASCIICharSequence.of(s.nextLine()));
+      i = Subject.parse(ASCIICharSequence.of(s.nextLine()));
     }
-    System.out.println(i.valore());
+    System.out.println(i.value());
   }
 }

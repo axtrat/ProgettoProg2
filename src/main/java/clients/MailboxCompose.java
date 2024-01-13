@@ -1,11 +1,6 @@
 package clients;
 
 import mua.App;
-import mua.Mua;
-import utils.UIInteract;
-
-import java.io.IOException;
-import java.util.StringJoiner;
 
 /**
  * MailboxCompose

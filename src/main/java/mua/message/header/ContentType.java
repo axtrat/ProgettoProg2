@@ -8,23 +8,30 @@ import java.util.StringJoiner;
 import utils.ASCIICharSequence;
 
 /**
- * ContentType è una classe immutabile che rappresenta un'intestazione di tipo
- * ContentType.
+ * ContentType è una classe immutabile che rappresenta un'intestazione di tipo ContentType.
  *
  * <p>
  * Un'istanza di ContentType contiene le information sul tipo del contenuto.
  */
-public class ContentType implements Intestazione {
+public class ContentType implements Header {
     /** SuperTipo e Tipo del contenuto */
     private final String type, subtype;
     /** Attributi */
     private final Map<String, String> attributes;
 
+    /*
+     * RI:  type, subtype, attributes != null
+     *      attributes non contiene null
+     *      type, subtype non vuoti
+     *
+     * AF: type/subtype; attribute=value...
+     */
+
     /**
      * Crea un'istanza di ContentType
      *
-     * @param type      supertipo del contenuto
-     * @param subtype   sottotipo del contenuto
+     * @param type      super-tipo del contenuto
+     * @param subtype   sotto-tipo del contenuto
      * @param attribute attributi aggiuntivi
      */
     public ContentType(final String type, final String subtype, final Map<String, String> attribute) {
@@ -51,12 +58,12 @@ public class ContentType implements Intestazione {
     }
 
     @Override
-    public String tipo() {
+    public String type() {
         return "Content-Type";
     }
 
     @Override
-    public String valore() {
+    public String value() {
         return type + "/" + subtype;
     }
 

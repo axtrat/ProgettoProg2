@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Scanner;
-import mua.message.header.Data;
-import mua.message.header.Intestazione;
+import mua.message.header.Date;
+import mua.message.header.Header;
 import utils.DateEncoding;
 
 /** DateEncode */
@@ -28,7 +28,7 @@ public class DateEncode {
       ZonedDateTime date =
           ZonedDateTime.of(
               LocalDate.of(year, month, day), LocalTime.MIDNIGHT, DateEncoding.EUROPE_ROME);
-      Intestazione i = new Data(date);
+      Header i = new Date(date);
       System.out.println(i);
     }
   }

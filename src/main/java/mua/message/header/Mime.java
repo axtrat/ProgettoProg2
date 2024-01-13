@@ -9,7 +9,7 @@ import java.util.Objects;
  * <p>
  * Un'istanza di Mime contiene la versione del MIME.
  */
-public class Mime implements Intestazione {
+public class Mime implements Header {
     
     /** Versione MIME */
     private final String version;
@@ -36,12 +36,12 @@ public class Mime implements Intestazione {
     }
 
     @Override
-    public String tipo() {
+    public String type() {
         return "MIME-Version";
     }
 
     @Override
-    public String valore() {
+    public String value() {
         return version;
     }
 

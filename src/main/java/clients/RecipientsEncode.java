@@ -3,9 +3,10 @@ package clients;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import mua.message.header.Destinatario;
-import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
+
+import mua.message.header.Address;
+import mua.message.header.Recipient;
+import mua.message.header.Header;
 
 /** RecipientsEncode */
 public class RecipientsEncode {
@@ -21,16 +22,16 @@ public class RecipientsEncode {
    * @param args not used.
    */
   public static void main(String[] args) {
-    Intestazione i;
-    List<Indirizzo> indirizzi;
+    Header i;
+    List<Address> indirizzi;
     try (Scanner s = new Scanner(System.in)) {
       indirizzi = new ArrayList<>();
       while (s.hasNextLine()) {
         String[] parts = s.nextLine().split(", ");
-        indirizzi.add(new Indirizzo(parts[0], parts[1], parts[2]));
+        indirizzi.add(new Address(parts[0], parts[1], parts[2]));
       }
     }
-    i = new Destinatario(indirizzi);
-    System.out.println(i.tipo() + ": " + i);
+    i = new Recipient(indirizzi);
+    System.out.println(i.type() + ": " + i);
   }
 }

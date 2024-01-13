@@ -8,16 +8,16 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Classe mutabile utilitaria che si occupa di decodificara le intestazioni
+ * Classe mutabile utilitaria che si occupa di decodificare le intestazioni
  * <p>
  * Decodifica le intestazioni in modo dinamico ed espandibile
  */
 public class HeaderParser {
     /** Mappa il tipo dell'intestazione (in minuscolo) alla sua funzione di parsing */
-    Map<ASCIICharSequence, Function<ASCIICharSequence, Intestazione>> parserMap = new HashMap<>();
+    private final Map<ASCIICharSequence, Function<ASCIICharSequence, Header>> parserMap = new HashMap<>();
 
     /**
-     * Crea un nuovo HeaderParser contenente i parser delle intestazioni pricipali
+     * Crea un nuovo HeaderParser contenente i parser delle intestazioni principali
      * <p>
      * Le intestazioni principali sono: 
      * {@code From}, 
@@ -29,10 +29,10 @@ public class HeaderParser {
      * {@code Content-Transfer-Encoding}
      */
     public HeaderParser() {
-        parserMap.put(ASCIICharSequence.of("from"), Mittente::parse);
-        parserMap.put(ASCIICharSequence.of("to"), Destinatario::parse);
-        parserMap.put(ASCIICharSequence.of("subject"), Oggetto::parse);
-        parserMap.put(ASCIICharSequence.of("date"), Data::parse);
+        parserMap.put(ASCIICharSequence.of("from"), Sender::parse);
+        parserMap.put(ASCIICharSequence.of("to"), Recipient::parse);
+        parserMap.put(ASCIICharSequence.of("subject"), Subject::parse);
+        parserMap.put(ASCIICharSequence.of("date"), Date::parse);
         parserMap.put(ASCIICharSequence.of("mime-version"), Mime::parse);
         parserMap.put(ASCIICharSequence.of("content-type"), ContentType::parse);
         parserMap.put(ASCIICharSequence.of("content-transfer-encoding"), ContentTransferEncoding::parse);
@@ -42,11 +42,11 @@ public class HeaderParser {
      * Parsa l'intestazione di tipo {@code header} a partire dalla sequenza che rappresenta il suo valore
      * @param header tipo dell'intestazione in lowercase
      * @param value sequenza che rappresenta il valore dell'intestazione
-     * @return l'intestazione parsata o {@code null} se il tipo non è riconosciuto
+     * @return l'intestazione riconosciuta o {@code null} se il tipo non è riconosciuto
      * @throws NullPointerException se {@code header} o {@code value} sono {@code null}
-     * @throws IllegalArgumentException se {@code value} non può essere parsato
+     * @throws IllegalArgumentException se {@code value} non può essere decodificata
      */
-    public Intestazione parse(ASCIICharSequence header, ASCIICharSequence value) {
+    public Header parse(ASCIICharSequence header, ASCIICharSequence value) {
         Objects.requireNonNull(header);
         Objects.requireNonNull(value);
         return parserMap.get(header).apply(value);
@@ -58,7 +58,7 @@ public class HeaderParser {
      * @param parser funzione che parsa l'intestazione
      * @throws NullPointerException se {@code header} o {@code parser} sono {@code null}
      */
-    public void addHeader(Intestazione header, Function<ASCIICharSequence, Intestazione> parser) {
-        parserMap.put(ASCIICharSequence.of(Objects.requireNonNull(header).tipo().toLowerCase()), Objects.requireNonNull(parser));
+    public void addHeader(Header header, Function<ASCIICharSequence, Header> parser) {
+        parserMap.put(ASCIICharSequence.of(Objects.requireNonNull(header).type().toLowerCase()), Objects.requireNonNull(parser));
     }
 }

@@ -1,21 +1,22 @@
 package mua;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import mua.message.Messaggio;
+import java.util.*;
+
+import mua.message.Message;
 
 /**
- * MailBox classe concreta mutabile che rappresenta una collezzione di messaggi
+ * MailBox classe concreta mutabile che rappresenta una collection di messaggi
  */
-public class MailBox implements Iterable<Messaggio> {
+public class MailBox implements Iterable<Message> {
     /** Nome della MailBox */
     private final String nome;
     /** Collezione di messaggi */
-    private final Collection<Messaggio> messaggi = new TreeSet<>((m1, m2) -> m2.compareTo(m1));
+    private final Collection<Message> messaggi = new TreeSet<>(Comparator.reverseOrder());
+
+    /*
+     * RI:  nome, messaggi != null
+     *      messaggi non contiene null, non ci devono essere messaggi uguali
+     */
 
     /**
      * Costruisce una MailBox di nome {@code nome}
@@ -50,11 +51,11 @@ public class MailBox implements Iterable<Messaggio> {
      * @return il messaggio scelto
      * @throws IndexOutOfBoundsException se l'indice è maggiore o uguale al numero di messaggi
      */
-    public Messaggio getMessage(int i) {
+    public Message getMessage(int i) {
         int j = 0;
-        for (Messaggio messaggio : messaggi)
+        for (Message message : messaggi)
             if (i == j++)
-                return messaggio;
+                return message;
         throw new IndexOutOfBoundsException();
     }
 
@@ -68,16 +69,11 @@ public class MailBox implements Iterable<Messaggio> {
     }
 
     /**
-     * Aggiunge il messaggio {@code messaggio} alla MailBox
-     * @param messaggio da aggiungere
+     * Aggiunge il message {@code message} alla MailBox
+     * @param message da aggiungere
      */
-    public void addMessage(Messaggio messaggio) {
-        messaggi.add(Objects.requireNonNull(messaggio));
-    }
-
-    @Override
-    public Iterator<Messaggio> iterator() {
-        return Collections.unmodifiableCollection(messaggi).iterator();
+    public void addMessage(Message message) {
+        messaggi.add(Objects.requireNonNull(message));
     }
 
     /**
@@ -87,6 +83,11 @@ public class MailBox implements Iterable<Messaggio> {
      */
     public void removeMessage(int n) {
         messaggi.remove(getMessage(n));
+    }
+
+    @Override
+    public Iterator<Message> iterator() {
+        return Collections.unmodifiableCollection(messaggi).iterator();
     }
 
     @Override

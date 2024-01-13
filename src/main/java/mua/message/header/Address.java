@@ -6,11 +6,10 @@ import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
 /**
- * Classe immutabile che rappresenta un indirizzo email valido: Composto da
- * {@code nome}, {@code
- * locale}, {@code dominio}
+ * Classe immutabile che rappresenta un indirizzo email valido, composto da
+ * {@code nome}, {@code locale}, {@code dominio}
  */
-public class Indirizzo {
+public class Address {
     /** Nome dell'utente */
     private String nome = "";
     /** Locale dell'indirizzo */
@@ -19,10 +18,9 @@ public class Indirizzo {
     private final String dominio;
 
     /*
-     * RI:
-     * nome, locale e dominio != null e devono contenere solo caratteri ASCII
-     * locale e dominio non devono essere vuote e devono essere composte solo da
-     * caratteri validi
+     * RI:  nome, locale e dominio != null e devono contenere solo caratteri ASCII
+     *      locale e dominio non devono essere vuote e devono essere composte solo da
+     *      caratteri validi
      */
 
     /**
@@ -35,14 +33,23 @@ public class Indirizzo {
      * @param dominio il dominio della mail: <i>...@{@code dominio}</i>
      * @throws NullPointerException     se {@code nome}, {@code locale} o
      *                                  {@code dominio} sono null
+     * @throws IllegalArgumentException se {@code locale} o {@code dominio} sono vuoti
      * @throws IllegalArgumentException se {@code nome}, {@code locale} o
      *                                  {@code dominio} contengono
      *                                  caratteri non ASCII
+     * @throws IllegalArgumentException {@code locale} o {@code dominio} contengono
+     *                                  caratteri non validi
+     *
      */
-    public Indirizzo(final String nome, final String locale, final String dominio) {
-        Objects.requireNonNull(nome);
-        Objects.requireNonNull(locale);
-        Objects.requireNonNull(dominio);
+    public Address(final String nome, final String locale, final String dominio) {
+        Objects.requireNonNull(nome, "Il nome non può essere null");
+        Objects.requireNonNull(locale, "Il locale non può essere null");
+        Objects.requireNonNull(dominio, "Il dominio non può essere null");
+
+        if (locale.isEmpty())
+            throw new IllegalArgumentException("il locale non può essere vuoto");
+        if (dominio.isEmpty())
+            throw new IllegalArgumentException("il dominio non può essere vuoto");
 
         if (!ASCIICharSequence.isAscii(nome))
             throw new IllegalArgumentException("Il nome può contenere solo caratteri ASCII");
@@ -82,15 +89,15 @@ public class Indirizzo {
      *                                  contengono caratteri non
      *                                  validi
      */
-    public static Indirizzo parse(final ASCIICharSequence sequence) {
-        Objects.requireNonNull(sequence);
+    public static Address parse(final ASCIICharSequence sequence) {
+        Objects.requireNonNull(sequence, "La sequenza non può essere null");
 
         final List<String> res = AddressEncoding.decode(sequence).get(0);
-        return new Indirizzo(res.get(0), res.get(1), res.get(2));
+        return new Address(res.get(0), res.get(1), res.get(2));
     }
 
     /**
-     * Ritorna il nome (<i>DisplayName</i>) associato all'indirizzo
+     * Restituisce il nome (<i>DisplayName</i>) associato all'indirizzo
      *
      * @return il DisplayName dell'indirizzo
      */
@@ -99,7 +106,7 @@ public class Indirizzo {
     }
 
     /**
-     * Ritorna il {@code locale} dell'indirizzo: <i>locale@...</i>
+     * Restituisce il {@code locale} dell'indirizzo: <i>locale@...</i>
      *
      * @return il {@code locale} dell'indirizzo
      */
@@ -108,7 +115,7 @@ public class Indirizzo {
     }
 
     /**
-     * Ritorna il {@code dominio} dell'indirizzo: <i>...@dominio</i>
+     * Restituisce il {@code dominio} dell'indirizzo: <i>...@dominio</i>
      *
      * @return il {@code dominio} dell'indirizzo
      */
@@ -117,7 +124,7 @@ public class Indirizzo {
     }
 
     /**
-     * Ritorna l'indirizzo email completo composto da {@code locale} e
+     * Restituisce l'indirizzo email completo composto da {@code locale} e
      * {@code dominio}
      *
      * @return l'indirizzo email completo: <i>locale@dominio</i>

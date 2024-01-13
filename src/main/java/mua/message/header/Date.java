@@ -6,44 +6,44 @@ import utils.ASCIICharSequence;
 import utils.DateEncoding;
 
 /**
- * Data è una classe immutabile che rappresenta un'intestazione di tipo Date.
+ * Date è una classe immutabile che rappresenta un'intestazione di tipo Date.
  *
  * <p>
- * Un'istanza di Data contiene la data e l'ora del messaggio.
+ * Un'istanza di Date contiene la data e l'ora del messaggio.
  */
-public class Data implements Intestazione {
+public class Date implements Header {
 
-    /** Data e ora */
+    /** Date e ora */
     private final ZonedDateTime zonedDateTime;
 
     /**
-     * Costruisce un'intestazione di tipo Data.
+     * Costruisce un'intestazione di tipo Date.
      *
      * @param zonedDateTime l'ora del messaggio.
      * @throws NullPointerException se {@code zonedDateTime} è null.
      */
-    public Data(final ZonedDateTime zonedDateTime) {
+    public Date(final ZonedDateTime zonedDateTime) {
         this.zonedDateTime = Objects.requireNonNull(zonedDateTime);
     }
 
     /**
-     * Crea l'intestazione Data a partire da una sequenza
+     * Crea l'intestazione Date a partire da una sequenza
      *
-     * @param sequence sequenza che contiene la Data
-     * @return Un'istanza di Data
+     * @param sequence sequenza che contiene la Date
+     * @return Un'istanza di Date
      * @throws NullPointerException se {@code sequence} è null
      */
-    public static Data parse(final ASCIICharSequence sequence) {
-        return new Data(DateEncoding.decode(Objects.requireNonNull(sequence)));
+    public static Date parse(final ASCIICharSequence sequence) {
+        return new Date(DateEncoding.decode(Objects.requireNonNull(sequence)));
     }
 
     @Override
-    public String tipo() {
+    public String type() {
         return "Date";
     }
 
     @Override
-    public ZonedDateTime valore() {
+    public ZonedDateTime value() {
         return zonedDateTime;
     }
 

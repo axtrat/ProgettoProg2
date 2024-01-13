@@ -2,8 +2,8 @@ package clients;
 
 import java.time.ZonedDateTime;
 import java.util.Scanner;
-import mua.message.header.Data;
-import mua.message.header.Intestazione;
+import mua.message.header.Date;
+import mua.message.header.Header;
 import utils.ASCIICharSequence;
 
 /** DateDecode */
@@ -18,11 +18,11 @@ public class DateDecode {
    * @param args not used.
    */
   public static void main(String[] args) {
-    Intestazione i;
+    Header i;
     try (Scanner sc = new Scanner(System.in)) {
-      i = Data.parse(ASCIICharSequence.of(sc.nextLine()));
+      i = Date.parse(ASCIICharSequence.of(sc.nextLine()));
     }
-    ZonedDateTime date = (ZonedDateTime) i.valore();
+    ZonedDateTime date = (ZonedDateTime) i.value();
     System.out.println(date.getDayOfWeek());
   }
 }

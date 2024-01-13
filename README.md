@@ -22,7 +22,7 @@ applicazione (basata su interfaccia utente di tipo testuale) in grado di
 comporre e memorizzare su disco dei *messaggi email*.
 
 L'aspetto cruciale del lavoro è che, come è ben noto, al fine di poter essere
-trasmesso, ogni messaggio deve essere *codificato* in una sequenza di *byte*
+trasmesso, ogni message deve essere *codificato* in una sequenza di *byte*
 secondo un formato molto preciso, descritto da una serie di RFC ("Request For
 Comments", documenti normativi emessi dall'"Internet Society" e dai suoi
 organismi, come la "Internet Engineering Task Force"). Sebbene non è richiesto
@@ -59,23 +59,23 @@ sorgente.
 
 ### I messaggi
 
-Un **messaggio** è costituito da una o più *parti*; ciascuna **parte** comprende
+Un **message** è costituito da una o più *parti*; ciascuna **parte** comprende
 alcune *intestazioni* (come ad esempio l'oggetto, il mittente, i destinatari…) e
 un *corpo* che è il suo vero e proprio contenuto.
 
-Una **intestazione** è caratterizzata dal *tipo* e da un *valore*, esempi di
+Una **header** è caratterizzata dal *tipo* e da un *valore*, esempi di
 *intestazioni* sono:
 
-* il *mittente*, il cui valore è un *indirizzo*;
+* il *mittente*, il cui valore è un *address*;
 * i *destinatari*, il cui valore è una lista di, *indirizzi*;
-* la *data* di composizione del messaggio, il cui valore è un oggetto di tipo
+* la *data* di composizione del message, il cui valore è un oggetto di tipo
   [`ZonedDateTime`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZonedDateTime.html),
-* l'*oggetto* del messaggio, il cui valore è una stringa. 
+* l'*oggetto* del message, il cui valore è una stringa. 
 
-Come vedremo, un messaggio può avere anche altre intestazioni, ma quelle
+Come vedremo, un message può avere anche altre intestazioni, ma quelle
 elencate qui sopra *devono* necessariamente essere sempre presenti.
 
-Per finire, un **indirizzo** è costituito da tre stringhe: il *display name*
+Per finire, un **address** è costituito da tre stringhe: il *display name*
 (che è opzionale), il *locale* e il *dominio*.
 
 ### L'applicazione e le mailbox
@@ -87,9 +87,9 @@ l'applicazione deve consentire di:
 * *elencare* le *mailbox* (in ordine alfabetico crescente del loro nome),
 * *selezionare* una delle *mailbox* e, una volta fatto:
     * *elencare* i messaggi che contiene (in ordine cronologico decrescente),
-    * *visualizzare* uno specifico messaggio,
-    * *cancellare* uno specifico messaggio,
-    * *comporre* un nuovo messaggio (ed aggiungerlo alla mailbox).
+    * *visualizzare* uno specifico message,
+    * *cancellare* uno specifico message,
+    * *comporre* un nuovo message (ed aggiungerlo alla mailbox).
 
 l'applicazione ha una semplice *interfaccia grafica testuale* che, leggendo un
 *comando* alla volta, permette di mostrare elenchi (di mailbox e messaggi) in
@@ -160,7 +160,7 @@ scrivere e leggere la codifica delle email nelle *box*.
 
 #### La codifica delle intestazioni
 
-La codifica di ciascuna *intestazione* è data dalla codifica del suo *tipo*
+La codifica di ciascuna *header* è data dalla codifica del suo *tipo*
 seguito da quella del suo *valore*. Alcuni esempi sono dati dalle linee
 seguenti:
 
@@ -174,9 +174,9 @@ mentre quella del valore è quella a destra.
 
 Particolare attenzione va prestata al caso in cui il valore non sia ASCII, per
 semplicità nel nostro caso questo sarà possibile solo nel caso dell'*oggetto*;
-se ad esempio (il valore del)l'oggetto del messaggio fosse "Questa è una prova"
+se ad esempio (il valore del)l'oggetto del message fosse "Questa è una prova"
 (che contiene il carattere non ASCII "è"), la codifica della relativa
-intestazione sarebbe
+header sarebbe
 
     Subject: =?utf-8?B?UXVlc3RhIMOoIHVuYSBwcm92YQ==?=
 
@@ -216,26 +216,26 @@ sempre rispettare sempre questo *ordine* fissato:
     Content-Type
     Content-Transfer-Encoding
 
-e all'inizio del messaggio devono sempre essere presenti le prime quattro
+e all'inizio del message devono sempre essere presenti le prime quattro
 intestazioni.
 
-**Nota bene**: gli RFC specificano che la codifica di una intestazione non può
+**Nota bene**: gli RFC specificano che la codifica di una header non può
 superare una data lunghezza, per evitare che ciò accada la codifica è sottoposta
 a *folding* (ossia viene suddivisa su righe consecutive di lunghezza limitata);
 per semplicità in questo progetto tale vincolo è rimosso e può assumere che
-valga sempre che la codifica di ogni intestazione è contenuta su una sola riga
+valga sempre che la codifica di ogni header è contenuta su una sola riga
 (per quanto lunga).
 
 #### La codifica del corpo
 
 Il *corpo* (di ciascuna *parte*) segue le intestazioni, è separato dalle
 precedenti con una *riga vuota*; il tipo di codifica del corpo è dato
-dall'intestazione `Content-Type` e, se il corpo non contiene caratteri non
+dall'header `Content-Type` e, se il corpo non contiene caratteri non
 ASCII, un esempio di codifica è
 
     Content-Type: text/plain; charset="us-ascii"
 
-    Questo messaggio costituisce un semplice esempio.
+    Questo message costituisce un semplice esempio.
 
 dove il `charset` è appunto quello ASCII; se viceversa il corpo contiene
 caratteri non ASCII, un esempio di codifica è 
@@ -246,7 +246,7 @@ caratteri non ASCII, un esempio di codifica è
     UXVlc3RhIHBhcnRlIMOoIHVuIGVzZW1waW8=
 
 dove, oltre al `Content-Type` (che questa volta ha un `charset` pari a UTF-8) è
-presente una intestazione di tpo `Content-Transfer-Encoding` con valore `base64`
+presente una header di tpo `Content-Transfer-Encoding` con valore `base64`
 corrispondente alla codifica scelta.
 
 Di nuovo, nel pacchetto di utilità la class `Base64Encoding` sono messi a disposizione dei metodi per
@@ -256,7 +256,7 @@ codifica in Base64 e UTF-8.
 ##### I messaggi con più parti
 
 Talvolta può essere utile avere diverse "alternative" per il contenuto di un
-messaggio. 
+message. 
 
 Ad esempio, potrebbe essere utile avere una versione HTML da mostrare in client
 che siano in grado di visualizzarla (come i client web o grafici), ma inviare
@@ -271,10 +271,10 @@ necessario aggiungere
     Content-Type: multipart/alternative; boundary=frontier
 
 alle intestazioni, quindi si possono includere le varie *parti* alternative del
-messaggio a patto di separarle con una riga contenente un *boundary* (che in
+message a patto di separarle con una riga contenente un *boundary* (che in
 questo progetto assumeremo sia sempre uguale a `frontier`).
 
-Un esempio di codifica di un messaggio con l'oggetto contenente caratteri non
+Un esempio di codifica di un message con l'oggetto contenente caratteri non
 ASCII, una parte testuale (contenente caratteri non ASCII) e una HTML è data da
 
     From: Massimo Santini <santini@di.unimi.it>
@@ -298,7 +298,7 @@ ASCII, una parte testuale (contenente caratteri non ASCII) e una HTML è data da
     --frontier--
 
 Si può osservare che il testo `This is a message with multiple parts in MIME
-format.` non è propriamente parte del messaggio, ma viene aggiunto per quei
+format.` non è propriamente parte del message, ma viene aggiunto per quei
 client che non sono in grado di comprendere la codifica dei messaggi con parti
 alternative; inoltre, nel caso della parte in HTML, il valore del `Content-Type` è
 `text/html` e non più `text/plain`.
@@ -306,7 +306,7 @@ alternative; inoltre, nel caso della parte in HTML, il valore del `Content-Type`
 #### Un esempio
 
 Di seguito è mostrato come usare `Storage` ed `EntryDecoding` per leggere e
-iniziare il processo di decodifica di un messaggio. Per prima cosa è necessario
+iniziare il processo di decodifica di un message. Per prima cosa è necessario
 leggere il contenuto codificato del file, ad esempio `tests/mbox/test-219c4395`:
 
 ```
@@ -316,7 +316,7 @@ Entry entry = box.entries().get(1);
 ASCIICharSequence sequence = entry.content();
 ```
 
-Ora `sequence` contiene esattamente il messaggio codificato; usando
+Ora `sequence` contiene esattamente il message codificato; usando
 `EntryDecoding.decode` si ottiene un elenco di tre `Fragment`; ogni frammento ha
 un elenco di *raw header* che sono coppie di nomi e valori delle intestazioni e
 un *raw body* che è il corpo, così come è codificato (il tutto rappresentato
@@ -369,7 +369,7 @@ lista
 ```
 
 dalla quale è quindi possibile istanziare gli indirizzi utili a definire il
-valore dell'intestazione destinatri così finalmente decodificata.
+valore dell'header destinatri così finalmente decodificata.
 
 ### L'interfaccia grafica testuale
 
@@ -397,9 +397,9 @@ Dovrà implementare una gerarchia di oggetti utili a rappresentare:
 
 * gli **indirizzi** (assumendo che non contengano caratteri non ASCII);
 * le **intestazioni** più comuni (almeno il *mittente*, i *destinatari*, la
-  *data* e l'*oggetto*); assuma che l'unica intestazione che possa contenere
+  *data* e l'*oggetto*); assuma che l'unica header che possa contenere
   caratteri non ASCII sia l'oggetto;
-* diverse **parti** di un messaggio, almeno il testo contenente solo caratteri
+* diverse **parti** di un message, almeno il testo contenente solo caratteri
   ASCII, il testo comprendente anche caratteri non ASCII e l'HTML (assumendo
   che contenga sempre caratteri non ASCII);
 * i **messaggi** costituiti da una sola parte di testo (contenente solo

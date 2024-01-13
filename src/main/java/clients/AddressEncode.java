@@ -1,9 +1,9 @@
 package clients;
 
 import java.util.Scanner;
-import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
-import mua.message.header.Mittente;
+import mua.message.header.Address;
+import mua.message.header.Header;
+import mua.message.header.Sender;
 
 /** AddressEncode */
 public class AddressEncode {
@@ -18,12 +18,12 @@ public class AddressEncode {
    * @param args not used.
    */
   public static void main(String[] args) {
-    Intestazione i;
+    Header i;
     try (Scanner s = new Scanner(System.in)) {
       String nome = s.nextLine();
       String locale = s.nextLine();
       String dominio = s.nextLine();
-      i = new Mittente(new Indirizzo(nome, locale, dominio));
+      i = new Sender(new Address(nome, locale, dominio));
     }
     System.out.println(i);
   }

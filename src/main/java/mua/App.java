@@ -9,17 +9,10 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
-import mua.message.Messaggio;
-import mua.message.Parte;
-import mua.message.header.ContentTransferEncoding;
-import mua.message.header.ContentType;
-import mua.message.header.Data;
-import mua.message.header.Destinatario;
-import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
-import mua.message.header.Mime;
-import mua.message.header.Mittente;
-import mua.message.header.Oggetto;
+import mua.message.Message;
+import mua.message.Part;
+import mua.message.header.*;
+import mua.message.header.Recipient;
 import utils.ASCIICharSequence;
 import utils.UIInteract;
 
@@ -108,19 +101,19 @@ public class App {
     /**
      * Compone un messaggio a partire dall'{@code input} utente
      * <p>
-     * Se l'input non è valido, viene lanciata un'eccezione
+     * Se l'{@code input} non è valido, viene lanciata un'eccezione
      * @param input l'input utente 
-     * @return il messaggio composto se l'input è valido
-     * @throws IllegalArgumentException se l'input non è valido
+     * @return il messaggio composto se l'{@code input} è valido
+     * @throws IllegalArgumentException se l'{@code input} non è valido
      */
-    private static Messaggio compose(String input) {
-        List<Intestazione> intestazioni = new ArrayList<>();
-        List<Parte> parti = new ArrayList<>();
+    private static Message compose(String input) {
+        List<Header> intestazioni = new ArrayList<>();
+        List<Part> parti = new ArrayList<>();
         try (Scanner sc = new Scanner(input)) {
-            intestazioni.add(new Mittente(Indirizzo.parse(ASCIICharSequence.of(sc.nextLine()))));
-            intestazioni.add(Destinatario.parse(ASCIICharSequence.of(sc.nextLine())));
-            intestazioni.add(new Oggetto(sc.nextLine()));
-            intestazioni.add(Data.parse(ASCIICharSequence.of(sc.nextLine())));
+            intestazioni.add(new Sender(Address.parse(ASCIICharSequence.of(sc.nextLine()))));
+            intestazioni.add(Recipient.parse(ASCIICharSequence.of(sc.nextLine())));
+            intestazioni.add(new Subject(sc.nextLine()));
+            intestazioni.add(Date.parse(ASCIICharSequence.of(sc.nextLine())));
 
             Map<String, String> corpi = new HashMap<>();
 
@@ -136,7 +129,7 @@ public class App {
             if (corpi.size() > 1) {
                 intestazioni.add(new Mime("1.0"));
                 intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
-                parti.add(new Parte(intestazioni, "This is a message with multiple parts in MIME format."));
+                parti.add(new Part(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();
             }
 
@@ -145,12 +138,12 @@ public class App {
                     intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"us-ascii\"")));
                 } else {
                     intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/" + key + "; charset=\"utf-8\"")));
-                    intestazioni.add(new ContentTransferEncoding("base64"));
+                    intestazioni.add(ContentTransferEncoding.parse(ASCIICharSequence.of("base64")));
                 }
-                parti.add(new Parte(intestazioni, corpi.get(key)));
+                parti.add(new Part(intestazioni, corpi.get(key)));
                 intestazioni.clear();
             }
         }
-        return new Messaggio(parti);
+        return new Message(parti);
     }
 }

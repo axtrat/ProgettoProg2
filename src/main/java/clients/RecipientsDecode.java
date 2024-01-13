@@ -2,8 +2,8 @@ package clients;
 
 import java.util.Scanner;
 
-import mua.message.header.Destinatario;
-import mua.message.header.Indirizzo;
+import mua.message.header.Address;
+import mua.message.header.Recipient;
 import utils.ASCIICharSequence;
 
 /** RecipientsDecode */
@@ -24,15 +24,15 @@ public class RecipientsDecode {
      * @param args not used.
      */
     public static void main(String[] args) {
-        Destinatario destinatario;
+        Recipient recipient;
         try (Scanner s = new Scanner(System.in)) {
             String destinatari = s.nextLine().split(": ")[1];
-            destinatario = Destinatario.parse(ASCIICharSequence.of(destinatari));
+            recipient = Recipient.parse(ASCIICharSequence.of(destinatari));
         }
-        for (Indirizzo indirizzo : destinatario.valore()) {
-            System.out.print(indirizzo.nome() + ", ");
-            System.out.print(indirizzo.locale() + ", ");
-            System.out.println(indirizzo.dominio());
+        for (Address address : recipient.value()) {
+            System.out.print(address.nome() + ", ");
+            System.out.print(address.locale() + ", ");
+            System.out.println(address.dominio());
         }
     }
 }

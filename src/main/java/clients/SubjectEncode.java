@@ -1,8 +1,9 @@
 package clients;
 
 import java.util.Scanner;
-import mua.message.header.Intestazione;
-import mua.message.header.Oggetto;
+
+import mua.message.header.Header;
+import mua.message.header.Subject;
 
 /** SubjectEncode */
 public class SubjectEncode {
@@ -16,9 +17,9 @@ public class SubjectEncode {
    * @param args not used.
    */
   public static void main(String[] args) {
-    Intestazione i;
+    Header i;
     try (Scanner s = new Scanner(System.in)) {
-      i = new Oggetto(s.nextLine());
+      i = new Subject(s.nextLine());
     }
     System.out.println(i);
   }

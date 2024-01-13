@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 
-import mua.message.Messaggio;
-import mua.message.Parte;
+import mua.message.Message;
+import mua.message.Part;
 import mua.message.header.*;
 import utils.ASCIICharSequence;
 import utils.Storage;
@@ -43,13 +43,13 @@ public class Mua {
     private MailBox selected;
     /** Corrispondenza tra Mailbox in memoria e su disco */
     private final Map<MailBox, Box> boxMap = new HashMap<>();
-    /** Corrispondenza tra Messaggio in memoria e su disco */
-    private final Map<Messaggio, Entry> entryMap = new TreeMap<>();
+    /** Corrispondenza tra Message in memoria e su disco */
+    private final Map<Message, Entry> entryMap = new TreeMap<>();
 
     /*
      * RI:  mBoxes, boxMap, entryMap != null e non contengono null
      *      ad ogni MailBox in mBoxes corrisponde una Entry in boxMap e viceversa
-     *      ad ogni Messaggio corrisponde una Entry in entryMap e viceversa
+     *      ad ogni Message corrisponde una Entry in entryMap e viceversa
      * 
      * AF:  
      */
@@ -66,17 +66,17 @@ public class Mua {
             MailBox mBox = new MailBox(box.toString());
             boxMap.put(mBox, box);
             for (Box.Entry entry : box.entries()) {
-                Messaggio messaggio;
+                Message message;
                 try {
-                    messaggio = Messaggio.parse(entry.content());
+                    message = Message.parse(entry.content());
                 } catch (Exception exception) {
                     throw new IllegalStateException(
-                        "Il messaggio: " + entry.toString() + " non è codificato secondo lo standard RFC:\n" + 
+                        "Il message: " + entry.toString() + " non è codificato secondo lo standard RFC:\n" +
                         exception.getMessage()
                     );
                 }
-                entryMap.put(messaggio, entry);
-                mBox.addMessage(messaggio);
+                entryMap.put(message, entry);
+                mBox.addMessage(message);
             }
             mBoxes.add(mBox);
         }
@@ -136,15 +136,15 @@ public class Mua {
     }
 
     /**
-     * Aggiunge il messaggio {@code messaggio} alla mailbox selezionata.
-     * @param messaggio il messaggio da aggiungere
+     * Aggiunge il message {@code message} alla mailbox selezionata.
+     * @param message il message da aggiungere
      * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
-     * @throws NullPointerException se {@code messaggio} è {@code null}
+     * @throws NullPointerException se {@code message} è {@code null}
      */
-    public void addMessage(Messaggio messaggio) {
+    public void addMessage(Message message) {
         checkSelected();
-        entryMap.put(messaggio, boxMap.get(selected).entry(ASCIICharSequence.of(Objects.requireNonNull(messaggio).toString())));
-        selected.addMessage(messaggio);
+        entryMap.put(message, boxMap.get(selected).entry(ASCIICharSequence.of(Objects.requireNonNull(message).toString())));
+        selected.addMessage(message);
     }
 
     /**
@@ -155,16 +155,16 @@ public class Mua {
     public String listMessages() {
         checkSelected();
         List<List<String>> content = new ArrayList<>();
-        for (Messaggio message : selected) {
+        for (Message message : selected) {
             LinkedList<String> row = new LinkedList<>();
-            Iterator<Intestazione> it = message.intestazioni();
-            row.add(((Indirizzo) it.next().valore()).getEmail());
+            Iterator<Header> it = message.intestazioni();
+            row.add(((Address) it.next().value()).getEmail());
             StringJoiner sj = new StringJoiner("\n");
-            for (Indirizzo indirizzo : ((Destinatario) it.next()).valore())
-                sj.add(indirizzo.getEmail());
+            for (Address address : ((Recipient) it.next()).value())
+                sj.add(address.getEmail());
             row.add(sj.toString()); // To
-            row.add(it.next().valore().toString()); // Subject
-            ZonedDateTime data = (ZonedDateTime) it.next().valore();
+            row.add(it.next().value().toString()); // Subject
+            ZonedDateTime data = (ZonedDateTime) it.next().value();
             row.addFirst(data.toLocalDate() + "\n" + data.toLocalTime()); // Date
             content.add(row);
         }
@@ -199,7 +199,7 @@ public class Mua {
     }
 
     /**
-     * Restitusce una stringa che rappresenta il messaggio di indice {@code n} della mailbox selezionata.
+     * Restituisce una stringa che rappresenta il messaggio di indice {@code n} della mailbox selezionata.
      * <p>
      * Il messaggio è rappresentato come una card di intestazioni e corpi del messaggio.
      * @param n l'indice del messaggio da leggere
@@ -210,26 +210,26 @@ public class Mua {
     public String readMessage(int n) {
         checkSelected();
         checkIndex(n);
-        Messaggio messaggio = selected.getMessage(n);
+        Message message = selected.getMessage(n);
         List<String> headers = new ArrayList<>(), values = new ArrayList<>();
 
-        for (Parte parte : messaggio) {
-            for (Intestazione intestazione : parte) {
-                switch (intestazione.tipo()) {
+        for (Part parte : message) {
+            for (Header header : parte) {
+                switch (header.type()) {
                     case "From", "Subject", "Date" -> {
-                        headers.add(intestazione.tipo());
-                        values.add(intestazione.valore().toString());
+                        headers.add(header.type());
+                        values.add(header.value().toString());
                     }
                     case "To" -> {
-                        headers.add(intestazione.tipo());
+                        headers.add(header.type());
                         StringJoiner sj = new StringJoiner("\n");
-                        for (Indirizzo indirizzo : ((Destinatario) intestazione).valore())
-                            sj.add(indirizzo.toString());
+                        for (Address address : ((Recipient) header).value())
+                            sj.add(address.toString());
                         values.add(sj.toString());
                     }
                     case "Content-Type" -> {
-                        headers.add("Part\n" + intestazione.valore());
-                        values.add(parte.corpo());
+                        headers.add("Part\n" + header.value());
+                        values.add(parte.body());
                     }
                     default -> {
                     }

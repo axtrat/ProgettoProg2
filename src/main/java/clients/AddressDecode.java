@@ -1,9 +1,10 @@
 package clients;
 
 import java.util.Scanner;
-import mua.message.header.Indirizzo;
-import mua.message.header.Intestazione;
-import mua.message.header.Mittente;
+
+import mua.message.header.Address;
+import mua.message.header.Header;
+import mua.message.header.Sender;
 import utils.ASCIICharSequence;
 
 /** AddressDecode */
@@ -19,11 +20,11 @@ public class AddressDecode {
    * @param args not used.
    */
   public static void main(String[] args) {
-    Intestazione i;
+    Header i;
     try (Scanner s = new Scanner(System.in)) {
-      i = new Mittente(Indirizzo.parse(ASCIICharSequence.of(s.nextLine())));
+      i = new Sender(Address.parse(ASCIICharSequence.of(s.nextLine())));
     }
-    Indirizzo address = (Indirizzo) i.valore();
+    Address address = (Address) i.value();
     System.out.println(address.nome());
     System.out.println(address.locale());
     System.out.println(address.dominio());

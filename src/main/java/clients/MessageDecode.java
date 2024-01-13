@@ -25,7 +25,7 @@ public class MessageDecode {
      *   Raw headers:
      *     Raw type = from, value = Luca Prigioniero <prigioniero@di.unimi.it>
      *     Raw type = to, value = "Massimo prof. Santini" <santini@di.unimi.it>, info@unimi.it
-     *     Raw type = subject, value = Oggetto semplice
+     *     Raw type = subject, value = Subject semplice
      *     Raw type = date, value = Wed, 6 Dec 2023 12:30:20 +0100
      *     Raw type = mime-version, value = 1.0
      *     Raw type = content-type, value = multipart/alternative; boundary=frontier

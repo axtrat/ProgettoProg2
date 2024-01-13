@@ -1,7 +1,7 @@
 package clients;
 
-import mua.message.Messaggio;
-import mua.message.Parte;
+import mua.message.Message;
+import mua.message.Part;
 import mua.message.header.*;
 import utils.ASCIICharSequence;
 
@@ -41,25 +41,25 @@ public class MessageEncode {
      * @param args not used
      */
     public static void main(String[] args) {
-        List<Intestazione> intestazioni = new ArrayList<>();
-        List<Parte> parti = new ArrayList<>();
+        List<Header> intestazioni = new ArrayList<>();
+        List<Part> parti = new ArrayList<>();
         try (Scanner s = new Scanner(System.in)) {
             String nome = s.nextLine();
             String locale = s.nextLine();
             String dominio = s.nextLine();
-            intestazioni.add(new Mittente(new Indirizzo(nome, locale, dominio)));
-            List<Indirizzo> indirizzi = new ArrayList<>();
+            intestazioni.add(new Sender(new Address(nome, locale, dominio)));
+            List<Address> indirizzi = new ArrayList<>();
             while (s.hasNextLine()) {
                 String line = s.nextLine();
                 if (line.startsWith("Oggetto")) {
-                    intestazioni.add(new Destinatario(indirizzi));
-                    intestazioni.add(new Oggetto(line));
-                    intestazioni.add(new Data(DATE));
+                    intestazioni.add(new Recipient(indirizzi));
+                    intestazioni.add(new Subject(line));
+                    intestazioni.add(new Date(DATE));
                     break;
                 }
                 locale = s.nextLine();
                 dominio = s.nextLine();
-                indirizzi.add(new Indirizzo(line, locale, dominio));
+                indirizzi.add(new Address(line, locale, dominio));
             }
 
             Map<String, String> corpi = new HashMap<>();
@@ -72,7 +72,7 @@ public class MessageEncode {
             if (corpi.size() > 1) {
                 intestazioni.add(new Mime("1.0"));
                 intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
-                parti.add(new Parte(intestazioni, "This is a message with multiple parts in MIME format."));
+                parti.add(new Part(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();
             }
 
@@ -81,12 +81,12 @@ public class MessageEncode {
                     intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/plain; charset=\"us-ascii\"")));
                 } else {
                     intestazioni.add(ContentType.parse(ASCIICharSequence.of("text/" + key + "; charset=\"utf-8\"")));
-                    intestazioni.add(new ContentTransferEncoding("base64"));
+                    intestazioni.add(ContentTransferEncoding.parse(ASCIICharSequence.of("base64")));
                 }
-                parti.add(new Parte(intestazioni, corpi.get(key)));
+                parti.add(new Part(intestazioni, corpi.get(key)));
                 intestazioni.clear();
             }
         }
-        System.out.println(new Messaggio(parti));
+        System.out.println(new Message(parti));
     }
 }
