@@ -96,14 +96,43 @@ public class Mua {
     }
 
     /**
+     * Restituisce il numero di mailbox disponibili.
+     * @return il numero di mailbox disponibili
+     */
+    public int mailBoxes() {
+        return mBoxes.size();
+    }
+
+    /**
      * Seleziona la mailbox di indice {@code n} e ne restituisce il nome.
      * @param n l'indice della mailbox da selezionare
      * @return il nome della mailbox selezionata
      * @throws IndexOutOfBoundsException se {@code n} supera il numero di mailbox
      */
     public String selectMailbox(int n) {
+        if (n >= mBoxes.size())
+            throw new IndexOutOfBoundsException("Indice maggiore del numero di mailbox");
         selected = mBoxes.get(n);
         return selected.name();
+    }
+
+    /**
+     * Controlla che sia stata precedentemente selezionata una mailbox.
+     * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
+     */
+    private void checkSelected() {
+        if (Objects.isNull(selected))
+            throw new IllegalStateException("Nessuna mailbox selezionata");
+    }
+
+    /**
+     * Restituisce il numero di messaggi contenuti nella mailbox selezionata.
+     * @return il numero di messaggi contenuti nella mailbox selezionata
+     * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
+     */
+    public int mailBoxMessages() {
+        checkSelected();
+        return selected.size();
     }
 
     /**
@@ -113,8 +142,7 @@ public class Mua {
      * @throws NullPointerException se {@code messaggio} è {@code null}
      */
     public void addMessage(Messaggio messaggio) {
-        if (Objects.isNull(selected))
-            throw new IllegalStateException("Nessuna mailbox selezionata");
+        checkSelected();
         entryMap.put(messaggio, boxMap.get(selected).entry(ASCIICharSequence.of(Objects.requireNonNull(messaggio).toString())));
         selected.addMessage(messaggio);
     }
@@ -125,8 +153,7 @@ public class Mua {
      * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
      */
     public String listMessages() {
-        if (Objects.isNull(selected))
-            throw new IllegalStateException("Nessuna mailbox selezionata");
+        checkSelected();
         List<List<String>> content = new ArrayList<>();
         for (Messaggio message : selected) {
             LinkedList<String> row = new LinkedList<>();
@@ -146,14 +173,27 @@ public class Mua {
     }
 
     /**
+     * Controlla che l'indice {@code index} sia valido per la mailbox selezionata.
+     * @param index l'indice da controllare
+     * @throws IndexOutOfBoundsException se {@code index} supera il numero di messaggi contenuti nella mailbox
+     */
+    private void checkIndex(int index) {
+        if (index >= selected.size())
+            throw new IndexOutOfBoundsException(
+                "Indice: " + index + 
+                "maggiore del numero di messaggi nella mailbox selezionata: " + selected.size()
+            );
+    }
+
+    /**
      * Elimina il messaggio di indice {@code n} dalla mailbox selezionata.
      * @param n l'indice del messaggio da eliminare
      * @throws IllegalStateException se non è stata precedentemente selezionata una mailbox
      * @throws IndexOutOfBoundsException se {@code n} supera il numero di messaggi contenuti nella mailbox
      */
     public void deleteMessage(int n) {
-        if (Objects.isNull(selected))
-            throw new IllegalStateException("Nessuna mailbox selezionata");
+        checkSelected();
+        checkIndex(n);
         entryMap.get(selected.getMessage(n)).delete();
         selected.removeMessage(n);
     }
@@ -168,8 +208,8 @@ public class Mua {
      * @throws IndexOutOfBoundsException se {@code n} supera il numero di messaggi contenuti nella mailbox
      */
     public String readMessage(int n) {
-        if (Objects.isNull(selected))
-            throw new IllegalStateException("Nessuna mailbox selezionata");
+        checkSelected();
+        checkIndex(n);
         Messaggio messaggio = selected.getMessage(n);
         List<String> headers = new ArrayList<>(), values = new ArrayList<>();
 

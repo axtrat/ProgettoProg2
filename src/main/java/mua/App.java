@@ -46,41 +46,65 @@ public class App {
                     break;
                 int n = (input.length > 1) ? Integer.parseInt(input[1]) - 1 : 0;
                 switch (input[0]) {
-                    case "LSM" -> System.out.println(mua.listMailboxes());
-                    case "MBOX" -> nomeBox = mua.selectMailbox(n);
-                    case "LSE" -> System.out.println(mua.listMessages());
-                    case "READ" -> ui.output(mua.readMessage(n));
-                    case "DELETE" -> mua.deleteMessage(n);
-                    case "COMPOSE" -> {
-                        StringJoiner sj = new StringJoiner("\n");
-                        String line;
-                        sj.add(ui.line("From: "));
-                        sj.add(ui.line("To: "));
-                        sj.add(ui.line("Subject: "));
-                        sj.add(ui.line("Date: "));
-
-                        ui.prompt("Text Body (. to end):");
-                        do
-                            sj.add((line = ui.line()));
-                        while (!line.equals("."));
-
-                        ui.prompt("Html Body (. to end):");
-                        do
-                            sj.add((line = ui.line()));
-                        while (!line.equals("."));
-
-                        mua.addMessage(compose(sj.toString()));
-                    }
-                    case "EXIT" -> {
+                    case "LSM": 
+                        ui.output(mua.listMailboxes());
+                        break;
+                    case "MBOX":
+                        if (n < mua.mailBoxes()) nomeBox = mua.selectMailbox(n);
+                        else ui.error("Inserire un indice valido: [1-" + mua.mailBoxes() + "]");
+                        break;
+                    case "EXIT": 
                         return;
-                    }
-                    default -> ui.error("Unknown command: " + input[0]);
+                    default:
+                        if (nomeBox.equals("*")) {
+                            ui.error("Selezionare una mailbox");
+                            break;
+                        }
+                        switch (input[0]) {
+                            case "LSE": 
+                                ui.output(mua.listMessages());
+                                break;
+                            case "READ": 
+                                if (n < mua.mailBoxMessages()) ui.output(mua.readMessage(n));
+                                else ui.error("Inserire un indice valido: [1-" + mua.mailBoxMessages() + "]");
+                                break;
+                            case "DELETE": 
+                                if (n < mua.mailBoxMessages()) mua.deleteMessage(n);
+                                else ui.error("Inserire un indice valido: [1-" + mua.mailBoxMessages() + "]");
+                                break;
+                            case "COMPOSE":
+                                StringJoiner sj = new StringJoiner("\n");
+                                String line;
+                                sj.add(ui.line("From: "));
+                                sj.add(ui.line("To: "));
+                                sj.add(ui.line("Subject: "));
+                                sj.add(ui.line("Date: "));
+        
+                                ui.prompt("Text Body (. to end):");
+                                do
+                                    sj.add((line = ui.line()));
+                                while (!line.equals("."));
+        
+                                ui.prompt("Html Body (. to end):");
+                                do
+                                    sj.add((line = ui.line()));
+                                while (!line.equals("."));
+
+                                try {
+                                    mua.addMessage(compose(sj.toString()));
+                                } catch (Exception e) {
+                                    ui.error(e.getMessage());
+                                }
+                                break;
+                            default: ui.error("Unknown command: " + input[0]);
+                        }
+                    break;
                 }
             }
         } catch (IOException ignored) {
         }
     }
-    
+
     /**
      * Compone un messaggio a partire dall'{@code input} utente
      * <p>
