@@ -6,21 +6,19 @@ import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
 /**
- * Classe immutabile che rappresenta un indirizzo email valido, composto da
+ * Classe immutabile che rappresenta un indirizzo email valido, composto da:
  * {@code nome}, {@code locale}, {@code dominio}
  */
-public class Address {
-    /** Nome dell'utente */
-    private String nome = "";
-    /** Locale dell'indirizzo */
-    private final String locale;
-    /** Dominio dell'indirizzo */
-    private final String dominio;
+public record Address(String nome, String locale, String dominio) {
 
     /*
-     * RI:  nome, locale e dominio != null e devono contenere solo caratteri ASCII
-     *      locale e dominio non devono essere vuote e devono essere composte solo da
-     *      caratteri validi
+     * RI:  nome, locale e dominio != null && devono contenere solo caratteri ASCII &&
+     *      locale, dominio non devono essere vuote e devono essere composte solo da caratteri validi
+     *      nome non contiene spazi iniziali o finali
+     * 
+     * AF:  AF(nome, locale, dominio)   = nome <locale@dominio>     // indirizzo email completo
+     *                                  = <locale@dominio>          // se nome è vuoto
+     *                                  = "nome" <locale@dominio>   // se nome contiene spazi
      */
 
     /**
@@ -28,9 +26,9 @@ public class Address {
      * {@code locale} e {@code
      * dominio}: <i> nome {@literal <}locale@dominio{@literal >}</i>
      *
-     * @param nome    il DisplayName associato alla mail
-     * @param locale  il locale della mail: <i>{@code locale}@...</i>
-     * @param dominio il dominio della mail: <i>...@{@code dominio}</i>
+     * @param nome    il DisplayName associato all'indirizzio email
+     * @param locale  il locale dell'indirizzio email: <i>{@code locale}@...</i>
+     * @param dominio il dominio dell'indirizzio email: <i>...@{@code dominio}</i>
      * @throws NullPointerException     se {@code nome}, {@code locale} o
      *                                  {@code dominio} sono null
      * @throws IllegalArgumentException se {@code locale} o {@code dominio} sono vuoti
@@ -41,7 +39,7 @@ public class Address {
      *                                  caratteri non validi
      *
      */
-    public Address(final String nome, final String locale, final String dominio) {
+    public Address {
         Objects.requireNonNull(nome, "Il nome non può essere null");
         Objects.requireNonNull(locale, "Il locale non può essere null");
         Objects.requireNonNull(dominio, "Il dominio non può essere null");
@@ -63,9 +61,7 @@ public class Address {
         if (!AddressEncoding.isValidAddressPart(dominio))
             throw new IllegalArgumentException("Il dominio contiene caratteri non validi");
 
-        this.nome = nome.trim();
-        this.locale = locale;
-        this.dominio = dominio;
+        nome = nome.trim();
     }
 
     /**

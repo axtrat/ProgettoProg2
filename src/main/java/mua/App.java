@@ -86,7 +86,8 @@ public class App {
                                 try {
                                     mua.addMessage(compose(sj.toString()));
                                 } catch (Exception e) {
-                                    ui.error(e.getMessage());
+                                    throw e;
+                                    //ui.error(e.getMessage());
                                 }
                                 break;
                             default: ui.error("Unknown command: " + input[0]);
@@ -110,7 +111,7 @@ public class App {
         List<Header> intestazioni = new ArrayList<>();
         List<Part> parti = new ArrayList<>();
         try (Scanner sc = new Scanner(input)) {
-            intestazioni.add(new Sender(Address.parse(ASCIICharSequence.of(sc.nextLine()))));
+            intestazioni.add(Sender.parse(ASCIICharSequence.of(sc.nextLine())));
             intestazioni.add(Recipient.parse(ASCIICharSequence.of(sc.nextLine())));
             intestazioni.add(new Subject(sc.nextLine()));
             intestazioni.add(Date.parse(ASCIICharSequence.of(sc.nextLine())));
@@ -127,7 +128,7 @@ public class App {
             }
 
             if (corpi.size() > 1) {
-                intestazioni.add(new Mime("1.0"));
+                intestazioni.add(Mime.MIME_1_0);
                 intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
                 parti.add(new Part(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();

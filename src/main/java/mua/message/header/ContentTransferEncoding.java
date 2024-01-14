@@ -1,21 +1,20 @@
 package mua.message.header;
 
-import utils.ASCIICharSequence;
-
 import java.util.Objects;
+
+import utils.ASCIICharSequence;
 
 /**
  * ContentTransferEncoding è una classe immutabile che rappresenta un'intestazione di tipo Content-Transfer-Encoding
  * <p>
  * Un'istanza di ContentTransferEncoding contiene le informazioni sul tipo di codifica del messaggio.
  */
-public class ContentTransferEncoding implements Header {
-    /** Tipo di codifica */
-    private final ASCIICharSequence encoding;
+public record ContentTransferEncoding(String encoding) implements Header {
 
     /*
-     * RI:  encoding != null, non vuoto
-     * AF:
+     * RI:  encoding != null, non vuoto, solo caratteri ASCII
+     * 
+     * AF:  AF(encoding) = Content-Transfer-Encoding: encoding // specifica il tipo di codifica del messaggio
      */
 
 
@@ -23,22 +22,27 @@ public class ContentTransferEncoding implements Header {
      * Costruisce un'intestazione di tipo ContentTransferEncoding.
      *
      * @param encoding il tipo di codifica del messaggio.
+     * @throws NullPointerException se {@code encoding} è null.
+     * @throws IllegalArgumentException se encoding è vuoto.
+     * @throws IllegalArgumentException se encoding contiene caratteri non ASCII.
      */
-    private ContentTransferEncoding(final ASCIICharSequence encoding) {
-        this.encoding = Objects.requireNonNull(encoding, "encoding non può essere null");
+    public ContentTransferEncoding {
+        encoding = Objects.requireNonNull(encoding, "encoding non può essere null");
         if (encoding.isEmpty())
             throw new IllegalArgumentException("encoding non può essere vuoto");
+        if (!ASCIICharSequence.isAscii(encoding))
+            throw new IllegalArgumentException("encoding può contenere solo caratteri ASCII");
     }
 
     /**
-     * Crea l'intestazione ContentTransferEncoding a partire da una sequenza ascii
-     * @param sequence sequenza che contiene l'encoding
+     * Crea l'intestazione ContentTransferEncoding a partire da una sequenza che lo rappresenta secondo lo standard RFC
+     * @param sequence la sequenza ASCII
      * @return Un'istanza di ContentTransferEncoding
      * @throws NullPointerException se {@code sequence} è null
-     * @throws IllegalArgumentException se {@code sequence} è vuota
+     * @throws IllegalArgumentException se la decodifica fallisce
      */
     public static ContentTransferEncoding parse (final ASCIICharSequence sequence) {
-        return new ContentTransferEncoding(Objects.requireNonNull(sequence, "encoding non può essere null"));
+        return new ContentTransferEncoding(Objects.requireNonNull(sequence, "la sequenza non può essere null").toString());
     }
 
     @Override
@@ -47,24 +51,12 @@ public class ContentTransferEncoding implements Header {
     }
 
     @Override
-    public ASCIICharSequence value() {
+    public String value() {
         return encoding;
     }
 
     @Override
     public String toString() {
-        return encoding.toString();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o instanceof ContentTransferEncoding that)
-            return  Objects.equals(encoding, that.encoding);
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(encoding);
+        return value();
     }
 }

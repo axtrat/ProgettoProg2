@@ -70,7 +70,7 @@ public class MessageEncode {
                     corpi.put(type, corpo);
             
             if (corpi.size() > 1) {
-                intestazioni.add(new Mime("1.0"));
+                intestazioni.add(Mime.parse(ASCIICharSequence.of("1.0")));
                 intestazioni.add(ContentType.parse(ASCIICharSequence.of("multipart/alternative; boundary=frontier")));
                 parti.add(new Part(intestazioni, "This is a message with multiple parts in MIME format."));
                 intestazioni.clear();

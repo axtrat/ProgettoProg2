@@ -1,10 +1,12 @@
 package mua.message.header;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+
 import utils.ASCIICharSequence;
 import utils.AddressEncoding;
 
@@ -15,20 +17,22 @@ import utils.AddressEncoding;
  */
 public class Recipient implements Header {
 
-    /** Lista degli indirizzi dei destinatari >= 1*/
-    private final List<Address> addresses = new ArrayList<>();
+    /** Collezione degli indirizzi dei destinatari >= 1*/
+    private final Collection<Address> addresses = new LinkedHashSet<>();
 
     /*
-     * RI: addresses != null, non contiene null e deve avere almeno un indirizzo
+     * RI:  addresses != null, non contiene null e deve avere almeno un indirizzo
+     *      addresses non contiene indirizzi duplicati
      *
-     * AF:
+     * AF:  AF(addresses) = { indirizzo in addresses | indirizzo è un indirizzo di un destinatario }
      */
 
     /**
      * Crea l'intestazione dei destinatari a partire da una collezione di indirizzi
      *
      * @param addresses iterable di indirizzi
-     * @throws NullPointerException se indirizzi è null
+     * @throws NullPointerException se {@code addresses} è {@code null}
+     * @throws IllegalArgumentException se {@code addresses} è vuoto
      */
     public Recipient(final Iterable<Address> addresses) {
         Objects.requireNonNull(addresses);
@@ -61,7 +65,7 @@ public class Recipient implements Header {
 
     @Override
     public List<Address> value() {
-        return Collections.unmodifiableList(addresses);
+        return List.copyOf(addresses);
     }
 
     @Override

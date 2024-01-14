@@ -16,7 +16,7 @@ public class Sender implements Header {
     /*
      * RI:  address != null
      *
-     * AF:
+     * AF: AF(address) = From: address
      */
 
     /**

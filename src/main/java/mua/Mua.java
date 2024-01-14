@@ -157,14 +157,13 @@ public class Mua {
         List<List<String>> content = new ArrayList<>();
         for (Message message : selected) {
             LinkedList<String> row = new LinkedList<>();
-            Iterator<Header> it = message.intestazioni();
-            row.add(((Address) it.next().value()).getEmail());
+            row.add((message.sender().value()).getEmail());
             StringJoiner sj = new StringJoiner("\n");
-            for (Address address : ((Recipient) it.next()).value())
+            for (Address address : message.recipient().value())
                 sj.add(address.getEmail());
             row.add(sj.toString()); // To
-            row.add(it.next().value().toString()); // Subject
-            ZonedDateTime data = (ZonedDateTime) it.next().value();
+            row.add(message.subject().value().toString()); // Subject
+            ZonedDateTime data = message.date().value();
             row.addFirst(data.toLocalDate() + "\n" + data.toLocalTime()); // Date
             content.add(row);
         }

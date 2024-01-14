@@ -5,26 +5,48 @@ import utils.ASCIICharSequence;
 import utils.Base64Encoding;
 import utils.EntryEncoding;
 import utils.Fragment;
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
- * Classe immutabile che rappresenta un messaggio email
+ * Classe immutabile che rappresenta un messaggio email 
  * <p>
- * Un messaggio è costituito da una o più parti;
- * Ciascuna parte comprende alcune intestazioni (come ad esempio l'oggetto, il mittente, i destinatari…) e un corpo che è il suo vero e proprio contenuto.
+ * Un messaggio è costituito da una o più parti {@link Part};
+ * <p>
+ * È possibile accedere alle intestazioni pricipali del messaggio tramite i metodi:
+ * <ul>
+ *  <li>{@link #sender()}</li>
+ *  <li>{@link #recipient()}</li>
+ *  <li>{@link #subject()}</li>
+ *  <li>{@link #date()}</li>
+ * </ul>
+ * <p>
+ * Il messaggio è iterabile sulle sue parti
+ * <p>
+ * Il messaggio è ordinabile in base alla data, nel caso in cui due messaggi abbiano la stessa data vengono presi in considerazione mittente, destinatario e oggetto
  */
 public class Message implements Iterable<Part>, Comparable<Message> {
-    /** Lista di intestazioni (copiata dalla prima parte) >= 4 */
-    private final List<Header> intestazioni = new ArrayList<>();
     /** Lista di parti >= 1 */
     private final List<Part> parti;
+    // Intestazioni principali del messaggio (copiate dalla prima parte)
+    /* Mittente del messaggio */
+    private Sender sender;
+    /* Destinatario/i del messaggio */
+    private Recipient recipient;
+    /* Oggetto del messaggio */
+    private Subject subject;
+    /* Data di invio del messaggio */
+    private Date date;
 
     /*
-     * RI:  intestazioni != null && intestazioni.size() >= 4 &&
-     *      parti != null && parti.size() >= 1
+     * RI:  parti != null && parti.size >= 1
+     *      sender, recipient, subject, date sono copie delle intestazioni principali del messaggio
+     *      sender, recipient, subject, date != null -> parti.get(0) le deve contenere
      * 
-     * AF:
+     * AF:  AF(parti) = { parte in parti | parte è una parte del messaggio }
      */
 
     /**
@@ -35,11 +57,25 @@ public class Message implements Iterable<Part>, Comparable<Message> {
      */
     public Message(final List<Part> parti) {
         this.parti = List.copyOf(parti);
-        parti.get(0).forEach(this.intestazioni::add);
-        if (intestazioni.size() < 4)
-            throw new IllegalArgumentException("Il messaggio deve avere almeno 4 intestazioni");
+        
         if (parti.isEmpty())
             throw new IllegalArgumentException("Il messaggio deve avere almeno una parte");
+        
+        for (Header header: parti.get(0)) {
+            if (header instanceof Sender sender)
+                this.sender = sender;
+            else if (header instanceof Recipient recipient)
+                this.recipient = recipient;
+            else if (header instanceof Subject subject)
+                this.subject = subject;
+            else if (header instanceof Date date)
+                this.date = date;
+        }
+
+        Objects.requireNonNull(sender, "Il messaggio deve avere un mittente");
+        Objects.requireNonNull(recipient, "Il messaggio deve avere un destinatario");
+        Objects.requireNonNull(subject, "Il messaggio deve avere un oggetto");
+        Objects.requireNonNull(date, "Il messaggio deve avere una data");
     }
 
     /**
@@ -70,31 +106,50 @@ public class Message implements Iterable<Part>, Comparable<Message> {
     }
 
     /**
+     * Restituisce il mittente del messaggio
+     * @return il mittente del messaggio
+     */
+    public Sender sender() {
+        return sender;
+    }
+
+    /**
+     * Restituisce il destinatario del messaggio
+     * @return il destinatario del messaggio
+     */
+    public Recipient recipient() {
+        return recipient;
+    }
+
+    /**
+     * Restituisce l'oggetto del messaggio
+     * @return l'oggetto del messaggio
+     */
+    public Subject subject() {
+        return subject;
+    }
+
+    /**
      * Restituisce la data del messaggio
      * @return la data del messaggio
      */
-    private ZonedDateTime getData() {
-        return (ZonedDateTime) intestazioni.get(3).value();
+    public Date date() {
+        return date;
     }
 
     @Override
     public int compareTo(final Message o) {
-        int res = this.getData().compareTo(o.getData());
+        int res = this.date.value().compareTo(o.date.value());
         if (res != 0) return res;
 
-        for (int i = 0; i < intestazioni.size(); i++) {
-            res = this.intestazioni.get(i).toString().compareTo(o.intestazioni.get(i).toString());
-            if (res != 0) return res;
-        }
-        return 0;
-    }
+        res = this.sender.toString().compareTo(o.sender.toString());
+        if (res != 0) return res;
 
-    /**
-     * Restituisce le intestazioni principali del messaggio
-     * @return le intestazioni principali del messaggio
-     */
-    public Iterator<Header> intestazioni() {
-        return intestazioni.iterator();
+        res = this.recipient.toString().compareTo(o.recipient.toString());
+        if (res != 0) return res;
+
+        res = this.subject.toString().compareTo(o.subject.toString());
+        return 0;
     }
 
     @Override

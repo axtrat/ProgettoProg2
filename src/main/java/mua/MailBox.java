@@ -6,6 +6,9 @@ import mua.message.Message;
 
 /**
  * MailBox classe concreta mutabile che rappresenta una collection di messaggi
+ * <p>
+ * 
+ * La MailBox è identificate dal suo nome ed è iterabile sui messaggi in ordine decrescente
  */
 public class MailBox implements Iterable<Message> {
     /** Nome della MailBox */
@@ -15,7 +18,11 @@ public class MailBox implements Iterable<Message> {
 
     /*
      * RI:  nome, messaggi != null
-     *      messaggi non contiene null, non ci devono essere messaggi uguali
+     *      messaggi non contiene null
+     *      per ogni messaggio m1, m2 in messaggi m1.compareTo(m2) == 0 sse m1==m2 // messaggi non contiene duplicati
+     * 
+     * AF:  AF(nome, messaggi) = nome mailBox, { messaggo in messaggi | messaggio }
+     *                          
      */
 
     /**
@@ -92,8 +99,8 @@ public class MailBox implements Iterable<Message> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof MailBox)
-            return nome.equals(((MailBox) obj).nome);
+        if (obj instanceof MailBox mbox)
+            return nome.equals(mbox.nome);
         return false;
     }
 

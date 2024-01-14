@@ -16,7 +16,7 @@ public class Subject implements Header {
     /*
      * RI:  subject != null
      *
-     * AF:
+     * AF:  AF(subject) = Subject: subject // dove subject è l'oggetto del messaggio
      */
 
     /**

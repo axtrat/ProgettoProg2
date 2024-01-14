@@ -12,7 +12,9 @@ import java.util.StringJoiner;
 /**
  * Classe immutabile che rappresenta la parte di un messaggio
  * <p>
- * Una parte è composta da una o più intestazioni e da un corpo non vuoto
+ * Una parte è composta da una o più intestazioni {@link Header} e da un corpo non vuoto
+ * <p>
+ * Una parte è iterabile sulle sue intestazioni
  */
 public class Part implements Iterable<Header> {
     /** Intestazioni della parte >= 1*/
@@ -24,7 +26,7 @@ public class Part implements Iterable<Header> {
      * RI:  headers, body != null e non vuoti
      *      headers deve contenere almeno un elemento e non può contenere null
      * 
-     * AF:
+     * AF:  AF(headers, body) = Lista di intestazioni seguita dal corpo
      */
 
     /**
@@ -37,12 +39,12 @@ public class Part implements Iterable<Header> {
      */
     public Part(final List<Header> headers, final String body) {
         this.headers = List.copyOf(headers);
-        this.body = Objects.requireNonNull(body, "Il body non può essere null");
+        this.body = Objects.requireNonNull(body, "Il corpo non può essere null");
         
         if (headers.isEmpty())
             throw new IllegalArgumentException("La parte deve avere almeno un'intestazione");
         if (body.isEmpty())
-            throw new IllegalArgumentException("Il body non può essere vuoto");
+            throw new IllegalArgumentException("Il corpo non può essere vuoto");
     }
 
     /**
