@@ -8,9 +8,32 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Classe mutabile utilitaria che si occupa di decodificare le intestazioni
+ * Classe mutabile utilitaria che si occupa di decodificare le intestazioni {@link Header}
  * <p>
- * Decodifica le intestazioni in modo dinamico ed espandibile
+ * Questa classe fornisce un metodo univoco per decodificare genericamente le intestazioni. 
+ * Presenta già i parser per le intestazioni principali ma permette l'aggiunta di nuovi parser tremite il metodo {@link #addHeader(Header, Function)}
+ * Il quale associa un'intestazione (ignorando il case) alla funzione di parsing del suo valore.
+ * <p>
+ * 
+ * Le intestazioni principali sono: 
+ * <ul>
+ *    <li>From {@link Sender}</li>
+ *    <li>To {@link Recipient}</li>
+ *    <li>Subject {@link Subject}</li>
+ *    <li>Date {@link Date}</li>
+ *    <li>Mime-Version {@link Mime}</li>
+ *    <li>Content-Type {@link ContentType}</li>
+ *    <li>Content-Transfer-Encoding {@link ContentTransferEncoding}</li>
+ * </ul>
+ * 
+ * Un'esempio di utilizzo è:
+ * <pre>{@code ...
+ * HeaderParser parser = new HeaderParser();
+ * String header = "From: Mario Rossi <mario.rossi@gmail.com>";
+ * String[] fields = header.split(": ");
+ * Intestazione i = parser.parse(fields[0], fields[1]);
+ *...}</pre>
+ * 
  */
 public class HeaderParser {
     /** Mappa il tipo dell'intestazione (in minuscolo) alla sua funzione di parsing */
@@ -26,14 +49,6 @@ public class HeaderParser {
     /**
      * Crea un nuovo HeaderParser contenente i parser delle intestazioni principali
      * <p>
-     * Le intestazioni principali sono: 
-     * {@code From}, 
-     * {@code To}, 
-     * {@code Subject}, 
-     * {@code Date}, 
-     * {@code MIME-Version}, 
-     * {@code Content-Type}, 
-     * {@code Content-Transfer-Encoding}
      */
     public HeaderParser() {
         parserMap.put("from", Sender::parse);
@@ -47,7 +62,9 @@ public class HeaderParser {
 
     /**
      * Parsa l'intestazione di tipo {@code header} a partire dalla sequenza che rappresenta il suo valore
-     * @param header tipo dell'intestazione in lowercase
+     * <p>
+     * Se il tipo non è riconosciuto, ritorna {@code null}
+     * @param header tipo dell'intestazione case-insensitive
      * @param value sequenza che rappresenta il valore dell'intestazione
      * @return l'intestazione riconosciuta o {@code null} se il tipo non è riconosciuto
      * @throws NullPointerException se {@code header} o {@code value} sono {@code null}
@@ -56,11 +73,12 @@ public class HeaderParser {
     public Header parse(ASCIICharSequence header, ASCIICharSequence value) {
         Objects.requireNonNull(header);
         Objects.requireNonNull(value);
-        return parserMap.get(header.toString()).apply(value);
+        return parserMap.get(header.toString().toLowerCase()).apply(value);
     }
 
     /**
      * Aggiunge un parser per l'intestazione di tipo {@code header}
+     * <p> la funzione {@code parser} deve prendere come argomento solo la sequenza che rappresenta il valore dell'intestazione
      * @param header tipo dell'intestazione
      * @param parser funzione che parsa l'intestazione
      * @throws NullPointerException se {@code header} o {@code parser} sono {@code null}

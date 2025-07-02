@@ -110,7 +110,8 @@ public class App {
     private static Message compose(String input) {
         List<Header> intestazioni = new ArrayList<>();
         List<Part> parti = new ArrayList<>();
-        try (Scanner sc = new Scanner(input)) {
+        {
+            Scanner sc = new Scanner(input);
             intestazioni.add(Sender.parse(ASCIICharSequence.of(sc.nextLine())));
             intestazioni.add(Recipient.parse(ASCIICharSequence.of(sc.nextLine())));
             intestazioni.add(new Subject(sc.nextLine()));
@@ -144,6 +145,7 @@ public class App {
                 parti.add(new Part(intestazioni, corpi.get(key)));
                 intestazioni.clear();
             }
+            sc.close();
         }
         return new Message(parti);
     }

@@ -5,7 +5,7 @@ import java.util.*;
 import mua.message.Message;
 
 /**
- * MailBox classe concreta mutabile che rappresenta una collection di messaggi
+ * MailBox classe concreta mutabile che rappresenta una raccolta di messaggi {@link Message}
  * <p>
  * 
  * La MailBox è identificate dal suo nome ed è iterabile sui messaggi in ordine decrescente

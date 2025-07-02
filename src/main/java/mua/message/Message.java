@@ -42,9 +42,10 @@ public class Message implements Iterable<Part>, Comparable<Message> {
     private Date date;
 
     /*
-     * RI:  parti != null && parti.size >= 1
+     * RI:  parti != null
+     *      parti deve contenere almeno un elemento e non può contenere null
      *      sender, recipient, subject, date sono copie delle intestazioni principali del messaggio
-     *      sender, recipient, subject, date != null -> parti.get(0) le deve contenere
+     *      sender, recipient, subject, date != null // implica parti.get(0) le deve contenere
      * 
      * AF:  AF(parti) = { parte in parti | parte è una parte del messaggio }
      */
@@ -52,7 +53,7 @@ public class Message implements Iterable<Part>, Comparable<Message> {
     /**
      * Costruisce un'istanza di Message a partire dalle sue {@code parti}
      * @param parti parti del messaggio
-     * @throws NullPointerException se {@code parti} è null
+     * @throws NullPointerException se {@code parti} è {@code null}, o contiene {@code null}
      * @throws IllegalArgumentException se {@code parti.isEmpty()} o {@code intestazioni.size() < 4}
      */
     public Message(final List<Part> parti) {

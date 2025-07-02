@@ -3,7 +3,6 @@ package mua;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ import utils.Storage.Box.Entry;
 /**
  * Classe che gestisce un Mail User Agent (MUA)
  * <p>
- * Un MUA è un programma che permette di gestire le email.
+ * Un MUA gestisce una collezione di mailbox .
  * <p>
  * Un MUA permette di:
  * <ul>
@@ -48,10 +47,15 @@ public class Mua {
 
     /*
      * RI:  mBoxes, boxMap, entryMap != null e non contengono null
-     *      ad ogni MailBox in mBoxes corrisponde una Entry in boxMap e viceversa
+     *      ad ogni MailBox in mBoxes corrisponde una Entry in boxMap e viceversa   // hanno lo stesso nome
      *      ad ogni Message corrisponde una Entry in entryMap e viceversa
+     *      
+     *      selected == mBoxes.get(i) sse la mailbox di indice i è selezionata
      * 
-     * AF:  
+     *      // ogni modifica sulle mailbox e sui messaggi viene propagata su disco
+     *      // non è garantito che le modifiche su disco vengano propagate in memoria se non in fase di costruzione   
+     * 
+     * AF:  AF(mBoxes) = collezione di mailbox
      */
 
     /**
@@ -215,23 +219,23 @@ public class Mua {
         for (Part parte : message) {
             for (Header header : parte) {
                 switch (header.type()) {
-                    case "From", "Subject", "Date" -> {
+                    case "From":
+                    case "Subject":
+                    case "Date":
                         headers.add(header.type());
                         values.add(header.value().toString());
-                    }
-                    case "To" -> {
+                        break;
+                    case "To":
                         headers.add(header.type());
                         StringJoiner sj = new StringJoiner("\n");
                         for (Address address : ((Recipient) header).value())
                             sj.add(address.toString());
                         values.add(sj.toString());
-                    }
-                    case "Content-Type" -> {
+                        break;
+                    case "Content-Type":
                         headers.add("Part\n" + header.value());
                         values.add(parte.body());
-                    }
-                    default -> {
-                    }
+                        break;
                 }
             }
         }

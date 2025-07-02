@@ -23,7 +23,8 @@ public class Part implements Iterable<Header> {
     private final String body;
 
     /*
-     * RI:  headers, body != null e non vuoti
+     * RI:  headers, body != null
+     *      body non può essere vuoto
      *      headers deve contenere almeno un elemento e non può contenere null
      * 
      * AF:  AF(headers, body) = Lista di intestazioni seguita dal corpo
@@ -67,7 +68,7 @@ public class Part implements Iterable<Header> {
         String coded = body;
         for (Header header : headers) {
             sj.add(header.type() + ": " + header);
-            if (header instanceof ContentTransferEncoding)
+            if (header instanceof ContentTransferEncoding encode && encode.value().equals("base64"))
                 coded = Base64Encoding.encode(body);
         }
 
